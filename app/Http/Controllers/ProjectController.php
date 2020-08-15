@@ -108,9 +108,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        foreach ($project->updates as $update) {
-            $update->delete();
-        }
+        $project->updates()->delete();
         $project->delete();
         return redirect(route('dashboard'));
     }

@@ -38,7 +38,8 @@ class UpdateController extends Controller
 
         $extension = $request->file('updatefile')->getClientOriginalExtension();
 
-        $path = $request->file('updatefile')->storeAs('updates/'.$project->name, $request->get('version').'.'.$extension);
+        $fileName = sprintf('%s.%s', $request->get('version'), $extension);
+        $path = $request->file('updatefile')->storeAs('updates/'.$project->name, $fileName);
 
         Update::create([
             'project_id' => $request['project_id'],

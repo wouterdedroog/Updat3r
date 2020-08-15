@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        @foreach($project->updates as $update)
+        @foreach($project->updates->reverse() as $update)
         <div class="card">
             <h5 class="card-header">Version {{$update->version}}</h5>
             <div class="card-body">

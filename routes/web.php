@@ -23,5 +23,5 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/documentation', 'dashboard.documentation')->name('documentation');
 
     Route::resource('/projects', 'ProjectController')->except(['index', 'edit']);
-    Route::resource('/updates', 'UpdateController')->except(['index', 'edit', 'create', 'show']);
+    Route::resource('/updates', 'UpdateController')->only(['store', 'update', 'destroy']);
 });
