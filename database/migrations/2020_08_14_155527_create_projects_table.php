@@ -15,9 +15,10 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('project_name');
+            $table->string('name');
             $table->integer('user_id');
-            $table->string('api_key');
+            $table->uuid('api_key');
+            $table->string('legacy_api_key')->nullable();
             $table->timestamps();
         });
     }

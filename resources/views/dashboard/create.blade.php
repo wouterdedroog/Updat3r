@@ -12,7 +12,7 @@
             @method('POST')
             @csrf
             <div class="form-group">
-                <input class="form-control form-control-lg" id="project_name" name="project_name" type="text"
+                <input class="form-control form-control-lg" id="name" name="name" type="text"
                     placeholder="Projectname" autocomplete="off" required>
             </div>
             <button type="submit" class="btn btn-primary btn-lg btn-block">Create</button>

@@ -20,11 +20,6 @@ class ProjectController extends Controller
         $this->middleware('auth.project', ['only' => ['show', 'update', 'destroy']]);
     }
 
-    public function documentation()
-    {
-        return view('dashboard.documentation');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -54,13 +49,13 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         // ([A-Z,a-z,\-, ])
-        $this->validate($request, ['project_name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
+        $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
 
-        $project = new Project;
-        $project->project_name = $request->input('project_name');
-        $project->user_id = auth()->user()->id;
-        $project->api_key = Str::uuid();
-        $project->save();
+        $project = Project::create([
+            'name' => $request->input('name'),
+            'user_id' => auth()->user()->id,
+            'api_key' => Str::uuid(),
+        ]);
 
         return redirect(route('projects.show', $project));
     }
@@ -87,17 +82,17 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        $this->validate($request, ['project_name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
-        if (Project::where('project_name', '=', $request['project_name'])->count() > 0) {
+        $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
+        if (Project::where('name', '=', $request['name'])->count() > 0) {
             return view('dashboard.show', [
                 'project' => $project
             ])->with('error', 'Another project with this name exists!');
         }
 
-        if (Storage::exists('updates/' . $project->project_name))
-            Storage::move('updates/' . $project->project_name, 'updates/' . $request['project_name']);
+        if (Storage::exists('updates/' . $project->name))
+            Storage::move('updates/' . $project->name, 'updates/' . $request['name']);
 
-        $project->project_name = $request['project_name'];
+        $project->name = $request['name'];
 
         $project->save();
         return view('dashboard.show', [

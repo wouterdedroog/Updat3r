@@ -24,7 +24,7 @@ class CheckApiAuthorization
                 'message' => 'No API key provided!',
             ], 400);
         }
-        $project = Project::where('project_name', '=', $request->project)->first();
+        $project = Project::where('name', '=', $request->project)->first();
         if ($project === null) {
             return response()->json([
                 'status' => '400',

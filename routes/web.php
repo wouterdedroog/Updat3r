@@ -16,13 +16,11 @@ use Illuminate\Support\Facades\Auth;
 
 Auth::routes();
 
-Route::get('/about', function () {
-    return view('about');
-});
+Route::view('/about', 'about');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', 'ProjectController@index')->name('dashboard');
-    Route::get('/documentation', 'ProjectController@documentation')->name('documentation');
+    Route::view('/documentation', 'dashboard.documentation')->name('documentation');
 
     Route::resource('/projects', 'ProjectController')->except(['index', 'edit']);
     Route::resource('/updates', 'UpdateController')->except(['index', 'edit', 'create', 'show']);

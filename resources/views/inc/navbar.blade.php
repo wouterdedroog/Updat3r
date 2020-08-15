@@ -28,7 +28,7 @@
                     </li>
                     @foreach(Auth::user()->projects as $project)
                     <li class="nav-item" style="vertical-align: middle;"><a class="nav-link" href="{{ route('projects.show', $project) }}"><i
-                                class="fa fa-fw fa-rocket"></i>{{ $project->project_name }}</a></li>
+                                class="fa fa-fw fa-rocket"></i>{{ $project->name }}</a></li>
                     @endforeach
                 </ul>
             </div>

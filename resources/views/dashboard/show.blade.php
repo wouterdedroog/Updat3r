@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('breadcrumb', $project->project_name)
-@section('title', $project->project_name)
+@section('breadcrumb', $project->name)
+@section('title', $project->name)
 
 @section('content')
 <div class="row">
@@ -149,8 +149,8 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group">
-                        <label for="project_name">New name:</label>
-                        <input class="form-control form-control-lg" id="project_name" name="project_name" type="text"
+                        <label for="name">New name:</label>
+                        <input class="form-control form-control-lg" id="name" name="name" type="text"
                             placeholder="" autocomplete="off" required>
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg btn-block">CHANGE!

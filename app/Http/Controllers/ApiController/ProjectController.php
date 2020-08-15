@@ -35,7 +35,7 @@ class ProjectController extends Controller
                 ->json(['status' => 400, 'message' => 'Invalid filter provided!'], 400);
         }
 
-        $project = Project::where('project_name', '=', $project)->first();
+        $project = Project::where('name', '=', $project)->first();
 
         $retrievedUpdates = Update::where([
             ['project_id', '=', $project->id],
@@ -52,7 +52,7 @@ class ProjectController extends Controller
             }
             $updates[] = [
                 'version' => $update->version,
-                'download' => url("/api/v2/updates/download/{$project->project_name}/{$update->version}"),
+                'download' => url("/api/v2/updates/download/{$project->name}/{$update->version}"),
                 'releaseDate' => $update->created_at->toDateTimeString(),
                 'critical' => $update->critical == 1,
             ];
@@ -70,7 +70,7 @@ class ProjectController extends Controller
      */
     public function download($project, $version)
     {
-        $project = Project::where('project_name', '=', $project)->first();
+        $project = Project::where('name', '=', $project)->first();
         $update = Update::where([
             ['version', '=', $version],
             ['project_id', '=', $project->id],
@@ -80,11 +80,12 @@ class ProjectController extends Controller
                 ->json(['status' => 400, 'message' => 'Invalid version provided!'], 400);
         }
 
-        $path = Storage::path('updates/' . $project->project_name . '/' . $update->filename);
+        $path = Storage::path('updates/' . $project->name . '/' . $update->filename);
         if (file_exists($path)) {
-            return Storage::download('updates/' . $project->project_name . '/' . $update->filename);
+            return Storage::download('updates/' . $project->name . '/' . $update->filename);
         } else {
-            return $path;
+            return response()
+                ->json(['status' => 400, 'message' => 'Update file not found!'], 400);
         }
     }
 }

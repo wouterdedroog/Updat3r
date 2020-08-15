@@ -38,16 +38,15 @@ class UpdateController extends Controller
 
         $extension = $request->file('updatefile')->getClientOriginalExtension();
 
-        $path = $request->file('updatefile')->storeAs('updates/'.$project->project_name, $request->get('version').'.'.$extension);
+        $path = $request->file('updatefile')->storeAs('updates/'.$project->name, $request->get('version').'.'.$extension);
 
-        $update = new Update;
-        
-        $update->project_id = $request->get('project_id');
-        $update->version = $request->get('version');
-        $update->critical = $request->get('critical') == 'true' ? 1 : 0;
-        $update->public = $request->get('public') == 'true' ? 1 : 0;
-        $update->filename = $request->get('version').'.'.$extension;
-        $update->save();
+        Update::create([
+            'project_id' => $request['project_id'],
+            'version' => $request['version'],
+            'critical' => $request->get('critical') == 'true' ? 1 : 0,
+            'public' => $request->get('public') == 'true' ? 1 : 0,
+            'filename' => $request['version'].'.'.$extension,
+        ]);
 
         return redirect(route('projects.show', Project::find($request->get('project_id'))));
     }
