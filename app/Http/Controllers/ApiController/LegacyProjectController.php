@@ -37,7 +37,7 @@ class LegacyProjectController extends Controller
                 ->json(['status' => 400, 'message' => 'Invalid filter provided!'], 400);
         }
 
-        $project = Project::where('name', '=', $request->project)->first();
+        $project = $request->project;
 
         $retrievedUpdates = Update::where([
             ['project_id', '=', $project->id],
@@ -54,7 +54,7 @@ class LegacyProjectController extends Controller
             }
             $updates[] = [
                 'version' => $update->version,
-                'download' => url("/api/v2/updates/download/{$project->name}/{$update->version}"),
+                'download' => url("/api/v1/updates/download/?project={$project->name}&key={$request->key}&version={$update->version}"),
                 'releaseDate' => $update->created_at->toDateTimeString(),
                 'critical' => $update->critical == 1,
             ];
@@ -76,7 +76,7 @@ class LegacyProjectController extends Controller
             return response()
                 ->json(['status' => 400, 'message' => 'No version given!'], 400);
         }
-        $project = Project::where('name', '=', $request->project)->first();
+        $project = $request->project;
         $update = Update::where([
             ['version', '=', $request->version],
             ['project_id', '=', $project->id],

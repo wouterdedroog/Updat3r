@@ -18,10 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get('/v2/updates/?project={project}&key={key}&show={filter}', 'ApiController\LegacyProjectController@show');
-//Route::get('/v1/updates/?project={project}&key={key}&show={filter}', function($project, $key, $filter) {
- //   return 'yeet';
-//});
 Route::get('/v1/updates/', 'ApiController\LegacyProjectController@show');
 Route::get('/v1/updates/download/', 'ApiController\LegacyProjectController@download');
 

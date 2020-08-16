@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Project;
 use App\Update;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -26,7 +27,7 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($project, $filter)
+    public function show(Request $request, $project, $filter)
     {
         if ($filter == 'latest') {
             $filter = 1;
@@ -35,7 +36,7 @@ class ProjectController extends Controller
                 ->json(['status' => 400, 'message' => 'Invalid filter provided!'], 400);
         }
 
-        $project = Project::where('name', '=', $project)->first();
+        $project = $request->project;
 
         $retrievedUpdates = Update::where([
             ['project_id', '=', $project->id],
@@ -68,9 +69,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function download($project, $version)
+    public function download(Request $request, $project, $version)
     {
-        $project = Project::where('name', '=', $project)->first();
+        $project = $request->project;
         $update = Update::where([
             ['version', '=', $version],
             ['project_id', '=', $project->id],

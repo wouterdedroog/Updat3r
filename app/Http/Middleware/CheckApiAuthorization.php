@@ -37,6 +37,7 @@ class CheckApiAuthorization
                 'message' => 'Invalid API key provided!',
             ], 400);
         }
+        $request->merge(['project' => $project]);
         return $next($request);
     }
 }
