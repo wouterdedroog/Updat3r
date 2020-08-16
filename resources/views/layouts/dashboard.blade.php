@@ -20,6 +20,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/template.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/codeblocks.css') }}" rel="stylesheet">
     <link href="{{ asset('fonts/circular-std/style.css') }}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/da32e9be3e.js" crossorigin="anonymous"></script>
 </head>
