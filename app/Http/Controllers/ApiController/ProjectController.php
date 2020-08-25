@@ -50,7 +50,7 @@ class ProjectController extends Controller
             }
             $updates[] = [
                 'version' => $update->version,
-                'download' => sprintf('/api/v2/updates/download/%s/%s', $project->name, $update->version),
+                'download' => url(sprintf('/api/v2/updates/download/%s/%s', $project->name, $update->version)),
                 'releaseDate' => $update->created_at->toDateTimeString(),
                 'critical' => $update->critical == 1,
             ];
