@@ -15,7 +15,7 @@ class UpdateController extends Controller
      * @return void
      */
     public function __construct()
-    {  
+    {
         $this->middleware('auth.update', ['only' => ['store', 'update', 'destroy']]);
     }
 
@@ -27,29 +27,30 @@ class UpdateController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, ['project_id' => 'required', 'version' => 'required|regex:/^([0-9A-Za-z-\. ])+$/', 'critical' => 'required', 'public' => 'required', 'updatefile' => 'required|file|max:2000']);
+        $this->validate($request, [
+            'project_id' => 'required', 'version' => 'required|regex:/^([0-9A-Za-z-\. ])+$/',
+            'critical' => 'required', 'public' => 'required', 'updatefile' => 'required|file|max:2000'
+        ]);
 
-        $project = Project::find($request->get('project_id'));
-        foreach ($project->updates as $update) {
-            if ($update->version == $request->get('version')) {
-                return redirect(route('projects.show', Project::find($request->get('project_id'))))->with('error', 'You already have a version with this name.');
-            }
+        $project = $request->project;
+        if ($project->updates->pluck('version')->contains($request['version'])) {
+            return redirect(route('projects.show', $project))->with('error', 'You already have a version with this name.');
         }
 
         $extension = $request->file('updatefile')->getClientOriginalExtension();
 
-        $fileName = sprintf('%s.%s', $request->get('version'), $extension);
-        $path = $request->file('updatefile')->storeAs('updates/'.$project->name, $fileName);
+        $fileName = sprintf('%s.%s', $request['version'], $extension);
+        $path = $request->file('updatefile')->storeAs('updates/' . $project->name, $fileName);
 
         Update::create([
             'project_id' => $request['project_id'],
             'version' => $request['version'],
-            'critical' => $request->get('critical') == 'true' ? 1 : 0,
-            'public' => $request->get('public') == 'true' ? 1 : 0,
-            'filename' => $request['version'].'.'.$extension,
+            'critical' => $request['critical'] == 'true' ? 1 : 0,
+            'public' => $request['public'] == 'true' ? 1 : 0,
+            'filename' => $request['version'] . '.' . $extension,
         ]);
 
-        return redirect(route('projects.show', Project::find($request->get('project_id'))));
+        return redirect(route('projects.show', $project));
     }
 
     /**
@@ -62,15 +63,16 @@ class UpdateController extends Controller
     public function update(Request $request, Update $update)
     {
         $this->validate($request, ['changeversion' => 'required|regex:/^([0-9A-Za-z-\. ])+$/', 'changecritical' => 'required', 'changepublic' => 'required']);
-        
-        $update->version = $request->get('changeversion');
-        $update->critical = $request->get('changecritical') == 'true' ? 1 : 0;
-        $update->public = $request->get('changepublic') == 'true' ? 1 : 0;
 
-        $update->save();
-        return view('dashboard.show', [
-            'project' => $update->project
+        $update->update([
+            'version' => $request['changeversion'],
+            'critical' => $request['changecritical'] == 'true' ? 1 : 0,
+            'public' => $request['changepublic'] == 'true' ? 1 : 0,
         ]);
+
+        return redirect(route('projects.show', [
+            'project' => $update->project
+        ]));
     }
 
     /**

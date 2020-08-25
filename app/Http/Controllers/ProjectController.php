@@ -48,7 +48,6 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        // ([A-Z,a-z,\-, ])
         $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
 
         $project = Project::create([
@@ -89,12 +88,12 @@ class ProjectController extends Controller
             ])->with('error', 'Another project with this name exists!');
         }
 
-        if (Storage::exists('updates/' . $project->name))
+        if (Storage::exists('updates/' . $project->name)) {
             Storage::move('updates/' . $project->name, 'updates/' . $request['name']);
+        }
 
-        $project->name = $request['name'];
+        $project->update(['name' => $request['name']]);
 
-        $project->save();
         return view('dashboard.show', [
             'project' => $project
         ])->with('success', 'Succesfully renamed project!');

@@ -22,4 +22,4 @@ Route::get('/v1/updates/', 'ApiController\LegacyProjectController@show');
 Route::get('/v1/updates/download/', 'ApiController\LegacyProjectController@download');
 
 Route::get('/v2/updates/download/{project}/{version}', 'ApiController\ProjectController@download');
-Route::get('/v2/updates/{project}/{filter}', 'ApiController\ProjectController@show');
+Route::get('/v2/updates/{project}/{filter}', 'ApiController\ProjectController@show')->where(['filter' => '([0-9]+|latest)']);

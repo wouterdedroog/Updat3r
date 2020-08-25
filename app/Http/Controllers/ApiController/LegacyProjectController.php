@@ -29,12 +29,11 @@ class LegacyProjectController extends Controller
      */
     public function show(Request $request)
     {
+        $request->validate(['show' => [ 'regex:/^([0-9]+|latest)$/']]);
+
         $filter = $request->show == null ? 9999 : $request->show;
         if ($filter == 'latest') {
             $filter = 1;
-        } else if (!is_numeric($filter)) {
-            return response()
-                ->json(['status' => 400, 'message' => 'Invalid filter provided!'], 400);
         }
 
         $project = $request->project;
@@ -54,7 +53,7 @@ class LegacyProjectController extends Controller
             }
             $updates[] = [
                 'version' => $update->version,
-                'download' => url("/api/v1/updates/download/?project={$project->name}&key={$request->key}&version={$update->version}"),
+                'download' => url(sprintf('/api/v1/updates/download/?project=%s&key=%s&version=%s', $project->name, $request->key, $update->version)),
                 'releaseDate' => $update->created_at->toDateTimeString(),
                 'critical' => $update->critical == 1,
             ];
@@ -86,9 +85,9 @@ class LegacyProjectController extends Controller
                 ->json(['status' => 400, 'message' => 'Invalid version provided!'], 400);
         }
 
-        $path = Storage::path('updates/' . $project->name . '/' . $update->filename);
-        if (file_exists($path)) {
-            return Storage::download('updates/' . $project->name . '/' . $update->filename);
+        $path = 'updates/' . $project->name . '/' . $update->filename;
+        if (file_exists(Storage::path($path))) {
+            return Storage::download($path);
         } else {
             return response()
                 ->json(['status' => 400, 'message' => 'Update file not found!'], 400);

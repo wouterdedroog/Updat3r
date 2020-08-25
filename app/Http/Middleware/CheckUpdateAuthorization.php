@@ -20,17 +20,18 @@ class CheckUpdateAuthorization
     {
         //Store function
         if ($request->has('project_id')) {
-            $project = Project::find($request->get('project_id'));
+            $project = Project::find($request['project_id']);
             if ($project == null) {
                 abort(404);
             }
             if (Auth::user()->id != $project->user_id) {
                 abort(404);
             }
+            $request->merge(['project' => $project]);
             return $next($request);
         }
 
-        //Edit/destroy function
+        //Update/destroy function
         $update = Update::find($request->route('update')->id);
         if ($update == null) {
             abort(404);
