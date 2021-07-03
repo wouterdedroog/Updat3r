@@ -8,7 +8,8 @@ class Update extends Model
 {
 
     protected $fillable = ['project_id', 'version', 'critical', 'public', 'filename'];
+
     public function project() {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo(Project::class);
     }
 }

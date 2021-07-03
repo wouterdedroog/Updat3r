@@ -8,11 +8,12 @@ class Project extends Model
 {
 
     protected $fillable = ['name', 'user_id', 'api_key', 'legacy_api_key'];
+
     public function user() {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     public function updates() {
-        return $this->hasMany('App\Update');
+        return $this->hasMany(Update::class);
     }
 }
