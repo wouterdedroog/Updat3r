@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ApiController\LegacyProjectController;
+use App\Http\Controllers\ApiController\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,12 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/v1/updates/', [LegacyProjectController::class, 'show']);
+Route::get('/v1/updates/download/', [LegacyProjectController::class, 'download']);
 
-Route::get('/v1/updates/', 'ApiController\LegacyProjectController@show');
-Route::get('/v1/updates/download/', 'ApiController\LegacyProjectController@download');
-
-Route::get('/v2/updates/download/{project}/{version}', 'ApiController\ProjectController@download');
-Route::get('/v2/updates/{project}/{filter}', 'ApiController\ProjectController@show')->where(['filter' => '([0-9]+|latest)']);
+Route::get('/v2/updates/download/{project}/{version}', [ProjectController::class, 'download']);
+Route::get('/v2/updates/{project}/{filter}', [ProjectController::class, 'show'])
+    ->where(['filter' => '([0-9]+|latest)']);
