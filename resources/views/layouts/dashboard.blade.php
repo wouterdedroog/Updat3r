@@ -40,6 +40,9 @@
                             <div class="nav-user-info">
                                 <h5 class="mb-0 text-white nav-user-name">{{ Auth::user()->name }}</h5>
                             </div>
+                            <a class="dropdown-item" href="{{ route('users.show', ['user' => Auth::user()]) }}">
+                                <i class="fas fa-user mr-2"></i>Profile
+                            </a>
                             <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                               document.getElementById('logout-form').submit();">
                                 <i class="fas fa-power-off mr-2"></i>Logout
