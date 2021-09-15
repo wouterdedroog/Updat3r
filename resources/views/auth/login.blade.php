@@ -5,7 +5,7 @@
 @section('content')
 <form method="POST" action="{{ route('login') }}">
     @csrf
-
+    @include('inc.messages')
     <div class="form-group">
         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email"
             value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email">

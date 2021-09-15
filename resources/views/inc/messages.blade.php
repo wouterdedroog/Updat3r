@@ -6,20 +6,14 @@
     @endforeach
 @endif
 
-@isset($success)
+@if(isset($success) || session('success'))
     <div class="alert alert-success">
-        {{$success}}
+        {{ $success ?? session('success') }}
     </div>
-@endisset
+@endif
 
-@isset($error)
+@if(isset($error) || session('error'))
     <div class="alert alert-danger">
-        {{$error}}
-    </div>
-@endisset
-
-@if(session('error'))
-    <div class="alert alert-danger">
-        {{session('error')}}
+        {{ $success ?? session('error') }}
     </div>
 @endif
