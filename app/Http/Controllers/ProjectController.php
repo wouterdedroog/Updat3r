@@ -96,7 +96,7 @@ class ProjectController extends Controller
 
         return view('dashboard.show', [
             'project' => $project
-        ])->with('success', 'Succesfully renamed project!');
+        ])->with('success', 'Successfully renamed project!');
     }
 
     /**

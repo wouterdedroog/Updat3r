@@ -61,7 +61,7 @@ class UserController extends Controller
         if ($user->update($data)) {
             return redirect(route('users.show', ['user' => $user]))
                 ->with([
-                    'success' => 'Succesfully updated your personal information'
+                    'success' => 'Successfully updated your personal information'
                 ]);
         }else{
             return redirect(route('users.edit', ['user' => $user]))
