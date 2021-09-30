@@ -83,7 +83,7 @@ class UserController extends Controller
             return redirect(route('login'))->with('success', 'Your account has been deleted.');
         }
         return redirect(route('profile.show', ['user' => $user]))
-            ->with('error', 'Something went wrong when deleting your account. Please c.');
+            ->with('error', 'Something went wrong when deleting your account. Please let us know if this problem continues.');
 
     }
 }
