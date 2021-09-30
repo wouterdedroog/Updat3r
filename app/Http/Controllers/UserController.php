@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -21,10 +22,10 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified user.
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return Response
      */
     public function show(User $user)
     {
@@ -32,10 +33,10 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing users.
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return Response
      */
     public function edit(User $user)
     {
@@ -43,18 +44,18 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified user in storage.
      *
-     * @param  \App\Http\Requests\ProfileUpdateRequest  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param ProfileUpdateRequest $request
+     * @param User $user
+     * @return Response
      */
     public function update(ProfileUpdateRequest $request, User $user)
     {
         $data = $request->validated();
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
-        }else{
+        } else {
             unset($data['password']);
         }
 
@@ -63,7 +64,7 @@ class UserController extends Controller
                 ->with([
                     'success' => 'Succesfully updated your personal information'
                 ]);
-        }else{
+        } else {
             return redirect(route('users.edit', ['user' => $user]))
                 ->with([
                     'error' => 'Something went wrong when attempting to change your personal information'
@@ -72,10 +73,10 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified user from storage.
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return Response
      */
     public function destroy(User $user)
     {
