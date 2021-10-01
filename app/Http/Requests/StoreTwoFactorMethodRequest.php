@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SetupTwoFactorMethodRequest extends FormRequest
+class StoreTwoFactorMethodRequest extends FormRequest
 {
 
     /**
@@ -15,6 +15,10 @@ class SetupTwoFactorMethodRequest extends FormRequest
     public function rules()
     {
         return [
+            'name' => [
+                'required',
+                'max:32'
+            ],
             'two_factor_check' => [
                 'required',
                 'digits:6',

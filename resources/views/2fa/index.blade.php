@@ -84,6 +84,10 @@
                                 @csrf
                                 <input type="hidden" name="two_factor_secret" value="{{ $two_factor_secret }}">
                                 <div class="form-group">
+                                    <label for="name">The name of your 2FA:</label>
+                                    <input name="name" id="name" class="form-control" type="text" placeholder="My smartphone" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="two_factor_check">Your newly generated 2FA code:</label>
                                     <input name="two_factor_check" id="two_factor_check" class="form-control" type="text" placeholder="123456" required>
                                 </div>

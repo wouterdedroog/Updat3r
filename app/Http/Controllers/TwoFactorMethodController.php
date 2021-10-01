@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SetupTwoFactorMethodRequest;
+use App\Http\Requests\StoreTwoFactorMethodRequest;
 use App\Http\Requests\UpdateTwoFactorMethodRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -42,17 +42,18 @@ class TwoFactorMethodController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param SetupTwoFactorMethodRequest $request
+     * @param StoreTwoFactorMethodRequest $request
      * @param User $user
      * @return RedirectResponse
      */
-    public function store(SetupTwoFactorMethodRequest $request, User $user)
+    public function store(StoreTwoFactorMethodRequest $request, User $user)
     {
         $data = $request->validated();
         $google2fa = new Google2FA();
 
         if ($google2fa->verifyKey($data['two_factor_secret'], $data['two_factor_check'], 8)) {
             $user->two_factor_methods()->save(new TwoFactorMethod([
+                'name' => $data['name'],
                 'google2fa_secret' => $data['two_factor_secret']
             ]));
             $request->session()->flash('success', 'Successfully added a new 2FA method');
