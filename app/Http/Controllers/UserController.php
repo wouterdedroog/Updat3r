@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use PragmaRX\Google2FA\Google2FA;
 
 class UserController extends Controller
 {
@@ -85,6 +86,5 @@ class UserController extends Controller
         }
         return redirect(route('profile.show', ['user' => $user]))
             ->with('error', 'Something went wrong when deleting your account. Please c.');
-
     }
 }

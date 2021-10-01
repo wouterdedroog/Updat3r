@@ -40,4 +40,8 @@ class User extends Authenticatable
     public function projects() {
         return $this->hasMany(Project::class);
     }
+
+    public function two_factor_methods() {
+        return $this->hasMany(TwoFactorMethod::class);
+    }
 }
