@@ -54,11 +54,15 @@ class TwoFactorMethodController extends Controller
         $google2fa = new Google2FA();
 
         if ($google2fa->verifyKey($data['two_factor_secret'], $data['two_factor_check'], 8)) {
-            $user->two_factor_methods()->save(new TwoFactorMethod([
+            $two_factor_method = new TwoFactorMethod([
                 'name' => $data['name'],
                 'google2fa_secret' => encrypt($data['two_factor_secret'])
-            ]));
+            ]);
+            $user->two_factor_methods()->save($two_factor_method);
             $request->session()->flash('success', 'Successfully added a new 2FA method');
+
+            // Update session to prevent user needing to type in OTP
+            $request->session()->put('2fa_method', $two_factor_method->id);
         } else {
             $request->session()->flash('error', 'Invalid 2FA code supplied. Please try again!');
         }
@@ -77,8 +81,12 @@ class TwoFactorMethodController extends Controller
     public function update(UpdateTwoFactorMethodRequest $request, User $user, $twoFactorMethod)
     {
         $data = $request->validated();
-        if (TwoFactorMethod::find($twoFactorMethod)->update($data)) {
+        $two_factor_method = TwoFactorMethod::find($twoFactorMethod);
+        if ($two_factor_method->update($data)) {
             $request->session()->flash('success', 'Successfully changed this 2FA method.');
+
+            // Update session to prevent user needing to type in OTP
+            $request->session()->put('2fa_method', $two_factor_method->id);
         } else {
             $request->session()->flash('error', 'Something went wrong when changing this 2FA method.');
         }
