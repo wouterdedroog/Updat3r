@@ -22,7 +22,10 @@ Auth::routes();
 
 Route::view('/about', 'about');
 
-Route::middleware('auth')->group(function () {
+Route::post('/verify-otp', [TwoFactorMethodController::class, 'verify_otp'])
+    ->middleware('auth')->name('2fa.verify_otp');
+
+Route::middleware(['auth', '2fa'])->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('dashboard');
     Route::view('/documentation', 'dashboard.documentation')->name('documentation');
 

@@ -17,7 +17,7 @@ class CreateTwoFactorMethodsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('name', 32)->nullable();
-            $table->string('google2fa_secret', 32);
+            $table->string('google2fa_secret', 512);
             $table->boolean('enabled')->default(true);
             $table->timestamps();
         });

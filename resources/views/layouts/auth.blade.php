@@ -39,9 +39,11 @@
                 @yield('content')
             </div>
             <div class="card-footer bg-white p-0">
-                <div class="card-footer-item card-footer-item-bordered">
-                    @yield('switch-button')
-                </div>
+                @hasSection('switch-button')
+                    <div class="card-footer-item card-footer-item-bordered">
+                        @yield('switch-button')
+                    </div>
+                @endif
                 <div class="card-footer-item card-footer-item-bordered">
                     <a href="/about" class="footer-link">What is {{ config('app.name', 'Updat3r') }}?</a>
                 </div>
