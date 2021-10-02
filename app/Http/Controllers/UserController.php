@@ -63,7 +63,7 @@ class UserController extends Controller
         if ($user->update($data)) {
             return redirect(route('users.show', ['user' => $user]))
                 ->with([
-                    'success' => 'Succesfully updated your personal information'
+                    'success' => 'Successfully updated your personal information'
                 ]);
         } else {
             return redirect(route('users.edit', ['user' => $user]))
@@ -85,6 +85,6 @@ class UserController extends Controller
             return redirect(route('login'))->with('success', 'Your account has been deleted.');
         }
         return redirect(route('profile.show', ['user' => $user]))
-            ->with('error', 'Something went wrong when deleting your account. Please c.');
+            ->with('error', 'Something went wrong when deleting your account. Please let us know if this problem continues.');
     }
 }
