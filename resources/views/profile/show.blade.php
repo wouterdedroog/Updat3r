@@ -21,7 +21,7 @@
 
             <div class="btn-group" role="group">
                 <a class="btn btn-primary mr-2" href="{{ route('users.edit', ['user' => $user]) }}"><i class="fas fa-pencil-alt mr-2"></i>Edit</a>
-                {{--<a class="btn btn-primary" href="{{ route('users.edit', ['user' => $user]) }}"><i class="fas fa-lock mr-2"></i>Setup 2FA</a>--}}
+                <a class="btn btn-primary" href="{{ route('users.twofactormethods.index', ['user' => $user]) }}"><i class="fas fa-lock mr-2"></i>Setup 2FA</a>
             </div>
         </div>
     </div>

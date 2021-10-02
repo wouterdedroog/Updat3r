@@ -14,6 +14,6 @@
 
 @if(isset($error) || session('error'))
     <div class="alert alert-danger">
-        {{ $success ?? session('error') }}
+        {{ $error ?? session('error') }}
     </div>
 @endif
