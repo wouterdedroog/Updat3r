@@ -20,12 +20,16 @@ class StoreTwoFactorMethodRequest extends FormRequest
                 'max:32'
             ],
             'two_factor_check' => [
-                'required',
+                'required_with:two_factor_secret',
                 'digits:6',
             ],
             'two_factor_secret' => [
-                'required',
+                'required_without:yubikey_otp',
                 'size:32'
+            ],
+            'yubikey_otp' => [
+                'required_without:two_factor_secret',
+                'size:44'
             ]
         ];
     }

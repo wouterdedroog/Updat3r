@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTwoFactorMethodRequest;
 use App\Http\Requests\UpdateTwoFactorMethodRequest;
-use App\Providers\AppServiceProvider;
 use App\Providers\RouteServiceProvider;
+use Exception;
+use Illuminate\Support\Arr;
+use Bitbeans\Yubikey\YubikeyFacade as Yubikey;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -14,7 +16,6 @@ use PragmaRX\Google2FAQRCode\Google2FA;
 use App\TwoFactorMethod;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class TwoFactorMethodController extends Controller
 {
@@ -51,22 +52,45 @@ class TwoFactorMethodController extends Controller
     public function store(StoreTwoFactorMethodRequest $request, User $user)
     {
         $data = $request->validated();
-        $google2fa = new Google2FA();
 
-        if ($google2fa->verifyKey($data['two_factor_secret'], $data['two_factor_check'], 8)) {
-            $two_factor_method = new TwoFactorMethod([
-                'name' => $data['name'],
-                'google2fa_secret' => encrypt($data['two_factor_secret'])
-            ]);
-            $user->two_factor_methods()->save($two_factor_method);
-            $request->session()->flash('success', 'Successfully added a new 2FA method');
+        if (Arr::has($data, 'yubikey_otp')) {
+            try {
+                // Validate yubikey with a timeout of max. 2 seconds
+                Yubikey::verify($data['yubikey_otp'], null, false, null, 2);
 
-            // Update session to prevent user needing to type in OTP
-            $request->session()->put('2fa_method', $two_factor_method->id);
+                $prefix = Yubikey::parsePasswordOTP($data['yubikey_otp'])['prefix'];
+                $two_factor_method = new TwoFactorMethod([
+                    'name' => $data['name'],
+                    'yubikey_otp' => $prefix
+                ]);
+                $user->two_factor_methods()->save($two_factor_method);
+                $request->session()->flash('success', 'Successfully added a new 2FA method');
+
+                // Update session to prevent user needing to type in OTP
+                $request->session()->put('2fa_method', $two_factor_method->id);
+            } catch (Exception $exception) {
+                if ($exception->getMessage() == 'REPLAYED_OTP') {
+                    $request->session()->flash('error', 'The supplied OTP has been used before.');
+                }
+                $request->session()->flash('error', 'Invalid OTP supplied. Please try again!');
+            }
         } else {
-            $request->session()->flash('error', 'Invalid 2FA code supplied. Please try again!');
-        }
+            $google2fa = new Google2FA();
 
+            if ($google2fa->verifyKey($data['two_factor_secret'], $data['two_factor_check'], 8)) {
+                $two_factor_method = new TwoFactorMethod([
+                    'name' => $data['name'],
+                    'google2fa_secret' => encrypt($data['two_factor_secret'])
+                ]);
+                $user->two_factor_methods()->save($two_factor_method);
+                $request->session()->flash('success', 'Successfully added a new 2FA method');
+
+                // Update session to prevent user needing to type in OTP
+                $request->session()->put('2fa_method', $two_factor_method->id);
+            } else {
+                $request->session()->flash('error', 'Invalid 2FA code supplied. Please try again!');
+            }
+        }
         return redirect()->route('users.twofactormethods.index', ['user' => $user]);
     }
 
@@ -119,17 +143,31 @@ class TwoFactorMethodController extends Controller
         $data = $request->validate([
             'otp' => [
                 'required',
-                'digits:6'
+                'min:6',
+                'max:44'
             ]
         ]);
         $two_factor_methods = $request->user()->two_factor_methods()
-            ->select(['id', 'google2fa_secret'])
+            ->select(['id', 'google2fa_secret', 'yubikey_otp'])
             ->where('enabled', true)
             ->get();
 
         $google2fa = new Google2FA();
         $correctOtps = $two_factor_methods->filter(function ($two_factor_method) use ($google2fa, $data) {
-            return $google2fa->verifyKey(decrypt($two_factor_method->google2fa_secret), $data['otp']);
+            if ($two_factor_method->google2fa_secret != null) {
+                return $google2fa->verifyKey(decrypt($two_factor_method->google2fa_secret), $data['otp'], 2);
+            } else {
+                $parsedOtp = Yubikey::parsePasswordOTP($data['otp']);
+                if ($parsedOtp && $two_factor_method->yubikey_otp == $parsedOtp['prefix']) {
+                    try {
+                        // Validate yubikey with a timeout of max. 2 seconds
+                        return Yubikey::verify($data['otp'], null, false, null, 2);
+                    } catch (Exception $ex) {
+                        return false;
+                    }
+                }
+            }
+            return false;
         });
 
         if ($correctOtps->count() == 0) {
