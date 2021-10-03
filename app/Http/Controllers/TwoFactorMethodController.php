@@ -167,6 +167,7 @@ class TwoFactorMethodController extends Controller
                     }
                 }
             }
+            return false;
         });
 
         if ($correctOtps->count() == 0) {
