@@ -6,3 +6,8 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+// Make it impossible to dismiss both 2FA modal tabs
+.modal-title [aria-expanded=true]{
+    pointer-events: none;
+}

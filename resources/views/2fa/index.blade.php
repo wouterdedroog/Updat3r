@@ -33,7 +33,7 @@
                                     <i class="far fa-{{ $two_factor_method->enabled ? 'check-circle' : 'times-circle' }}"></i>
                                 </td>
                                 <td>{{ $two_factor_method->name }}</td>
-                                <td>{{ isset($two_factor_method->google2fa_secret) ? 'Mobile Device' : 'TBD' }}</td>
+                                <td>{{ isset($two_factor_method->google2fa_secret) ? 'Mobile Device' : 'Yubikey' }}</td>
                                 <td>
                                     <form action="{{ route('users.twofactormethods.update', ['user' => $user, 'twofactormethod' => $two_factor_method]) }}"
                                         method="POST">
@@ -61,45 +61,73 @@
                 </table>
             @endif
 
-            <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#google2faModal">
+            <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#add2FAModal">
                 <i class="fas fa-plus-circle"></i> Add 2FA method
             </button>
 
-            <!-- <google 2fa modal> -->
-            <div class="modal fade" id="google2faModal" tabindex="-1" role="dialog"
-                 aria-labelledby="google2faModalLabel" aria-hidden="true">
+            <!-- <add 2fa method modal> -->
+            <div class="modal fade" id="add2FAModal" tabindex="-1" role="dialog"
+                 aria-labelledby="add2FAModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="google2faModalLabel">Google 2FA</h5>
+                            <h5 class="modal-title" id="add2FAModalLabel">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" id="G2FAHeading"
+                                        data-target="#collapseG2FA" aria-expanded="true" aria-controls="collapseG2FA">
+                                    Google 2FA
+                                </button>
+                                |
+                                <button class="btn btn-link" type="button" data-toggle="collapse" id="YubiOTPHeading"
+                                        data-target="#collapseYubiOTP" aria-expanded="false" aria-controls="collapseYubiOTP">
+                                    Yubikey OTP
+                                </button>
+                            </h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            {!! $two_factor_image !!}
-                            <br/>
-                            <i>Scan this QR code with your phone, or add the 2FA code manually: <code>{{ $two_factor_secret }}</code></i>
-                            <form method="POST" action="{{ route('users.twofactormethods.store', ['user' => $user]) }}" class="mt-3">
-                                @csrf
-                                <input type="hidden" name="two_factor_secret" value="{{ $two_factor_secret }}">
-                                <div class="form-group">
-                                    <label for="name">The name of your 2FA:</label>
-                                    <input name="name" id="name" class="form-control" type="text" placeholder="My smartphone" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="two_factor_check">Your newly generated 2FA code:</label>
-                                    <input name="two_factor_check" id="two_factor_check" class="form-control" type="text" placeholder="123456" required>
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" class="form-control btn btn-primary" value="Add 2FA method">
-                                </div>
-                            </form>
+                            <div id="collapseG2FA" class="collapse show" aria-labelledby="G2FAHeading" data-parent="#add2FAModal">
+                                {!! $two_factor_image !!}
+                                <br/>
+                                <i>Scan this QR code with your phone, or add the 2FA code manually: <code>{{ $two_factor_secret }}</code></i>
+                                <form method="POST" action="{{ route('users.twofactormethods.store', ['user' => $user]) }}" class="mt-3">
+                                    @csrf
+                                    <input type="hidden" name="two_factor_secret" value="{{ $two_factor_secret }}">
+                                    <div class="form-group">
+                                        <label for="name">Give your new 2FA method a name:</label>
+                                        <input name="name" id="name" class="form-control" type="text" placeholder="My smartphone" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="two_factor_check">A newly generated 2FA code:</label>
+                                        <input name="two_factor_check" id="two_factor_check" class="form-control" type="text" placeholder="123456" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" class="form-control btn btn-primary" value="Add 2FA method">
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="collapseYubiOTP" class="collapse" aria-labelledby="YubiOTPHeading" data-parent="#add2FAModal">
+                                <form method="POST" action="{{ route('users.twofactormethods.store', ['user' => $user]) }}" class="mt-3">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="name">Give your new 2FA method a name:</label>
+                                        <input name="name" id="name" class="form-control" type="text" placeholder="My Yubikey" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="yubikey_otp">A newly generated Yubikey OTP:</label>
+                                        <input name="yubikey_otp" id="yubikey_otp" class="form-control" type="text" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" class="form-control btn btn-primary" value="Add 2FA method">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- </google 2fa modal> -->
+            <!-- </add 2fa method modal> -->
         </div>
     </div>
 @endsection
