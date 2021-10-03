@@ -61,7 +61,7 @@ class TwoFactorMethodController extends Controller
                 $prefix = Yubikey::parsePasswordOTP($data['yubikey_otp'])['prefix'];
                 $two_factor_method = new TwoFactorMethod([
                     'name' => $data['name'],
-                    'yubikey_otp' => $prefix
+                    'yubikey_otp' => encrypt($prefix)
                 ]);
                 $user->two_factor_methods()->save($two_factor_method);
                 $request->session()->flash('success', 'Successfully added a new 2FA method');
@@ -158,7 +158,7 @@ class TwoFactorMethodController extends Controller
                 return $google2fa->verifyKey(decrypt($two_factor_method->google2fa_secret), $data['otp'], 2);
             } else {
                 $parsedOtp = Yubikey::parsePasswordOTP($data['otp']);
-                if ($parsedOtp && $two_factor_method->yubikey_otp == $parsedOtp['prefix']) {
+                if ($parsedOtp && decrypt($two_factor_method->yubikey_otp) == $parsedOtp['prefix']) {
                     try {
                         // Validate yubikey with a timeout of max. 2 seconds
                         return Yubikey::verify($data['otp'], null, false, null, 2);
