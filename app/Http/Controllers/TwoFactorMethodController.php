@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTwoFactorMethodRequest;
 use App\Http\Requests\UpdateTwoFactorMethodRequest;
 use App\Providers\RouteServiceProvider;
+use Exception;
 use Illuminate\Support\Arr;
 use Bitbeans\Yubikey\YubikeyFacade as Yubikey;
 use Illuminate\Contracts\Foundation\Application;
@@ -53,7 +54,7 @@ class TwoFactorMethodController extends Controller
         $data = $request->validated();
 
         if (Arr::has($data, 'yubikey_otp')) {
-            try{
+            try {
                 // Validate yubikey with a timeout of max. 2 seconds
                 Yubikey::verify($data['yubikey_otp'], null, false, null, 2);
 
@@ -67,7 +68,7 @@ class TwoFactorMethodController extends Controller
 
                 // Update session to prevent user needing to type in OTP
                 $request->session()->put('2fa_method', $two_factor_method->id);
-            }catch(\Exception $exception) {
+            } catch (Exception $exception) {
                 if ($exception->getMessage() == 'REPLAYED_OTP') {
                     $request->session()->flash('error', 'The supplied OTP has been used before.');
                 }
@@ -155,13 +156,13 @@ class TwoFactorMethodController extends Controller
         $correctOtps = $two_factor_methods->filter(function ($two_factor_method) use ($google2fa, $data) {
             if ($two_factor_method->google2fa_secret != null) {
                 return $google2fa->verifyKey(decrypt($two_factor_method->google2fa_secret), $data['otp'], 2);
-            }else{
+            } else {
                 $parsedOtp = Yubikey::parsePasswordOTP($data['otp']);
                 if ($parsedOtp && $two_factor_method->yubikey_otp == $parsedOtp['prefix']) {
-                    try{
+                    try {
                         // Validate yubikey with a timeout of max. 2 seconds
                         return Yubikey::verify($data['otp'], null, false, null, 2);
-                    }catch(\Exception $ex) {
+                    } catch (Exception $ex) {
                         return false;
                     }
                 }
