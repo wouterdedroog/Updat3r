@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'api.legacyauthorized' => \App\Http\Middleware\CheckApiLegacyAuthorization::class,
         'auth.project' => \App\Http\Middleware\CheckProjectAuthorization::class,
         'auth.update' => \App\Http\Middleware\CheckUpdateAuthorization::class,
+        'auth.2fa' => \App\Http\Middleware\CheckTwoFactorMethodAuthorization::class,
 
         '2fa' => \App\Http\Middleware\TwoFactorMiddleware::class,
     ];

@@ -19,6 +19,10 @@ use Illuminate\Http\Request;
 
 class TwoFactorMethodController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth.2fa')->only(['update', 'destroy']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -99,18 +103,17 @@ class TwoFactorMethodController extends Controller
      *
      * @param UpdateTwoFactorMethodRequest $request
      * @param User $user
-     * @param $twoFactorMethod
+     * @param TwoFactorMethod $twofactormethod
      * @return RedirectResponse
      */
-    public function update(UpdateTwoFactorMethodRequest $request, User $user, $twoFactorMethod)
+    public function update(UpdateTwoFactorMethodRequest $request, User $user, TwoFactorMethod $twofactormethod)
     {
         $data = $request->validated();
-        $two_factor_method = TwoFactorMethod::find($twoFactorMethod);
-        if ($two_factor_method->update($data)) {
+        if ($twofactormethod->update($data)) {
             $request->session()->flash('success', 'Successfully changed this 2FA method.');
 
             // Update session to prevent user needing to type in OTP
-            $request->session()->put('2fa_method', $two_factor_method->id);
+            $request->session()->put('2fa_method', $twofactormethod->id);
         } else {
             $request->session()->flash('error', 'Something went wrong when changing this 2FA method.');
         }
@@ -123,9 +126,9 @@ class TwoFactorMethodController extends Controller
      * @param TwoFactorMethod $twoFactorMethod
      * @return RedirectResponse
      */
-    public function destroy(Request $request, User $user, $twoFactorMethod)
+    public function destroy(Request $request, User $user, TwoFactorMethod $twofactormethod)
     {
-        if (TwoFactorMethod::destroy($twoFactorMethod)) {
+        if ($twofactormethod->delete()) {
             $request->session()->flash('success', 'Successfully deleted this 2FA method.');
         } else {
             $request->session()->flash('error', 'Something went wrong whilst deleting this 2FA method.');
