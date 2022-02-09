@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Welcome ' . Auth::user()->name . '!');
+@section('title', 'Welcome ' . Auth::user()->name . '!')
 @section('breadcrumb', 'Landing')
 
 @section('content')
