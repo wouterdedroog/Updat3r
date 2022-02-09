@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Update;
-use App\Project;
+use App\Models\Update;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class UpdateController extends Controller
@@ -57,7 +57,7 @@ class UpdateController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Project  $project
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Update $update)
@@ -78,7 +78,7 @@ class UpdateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Project  $project
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
     public function destroy(Update $update)

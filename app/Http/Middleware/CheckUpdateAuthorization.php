@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Project;
-use App\Update;
+use App\Models\Project;
+use App\Models\Update;
 use Illuminate\Support\Facades\Auth;
 
 class CheckUpdateAuthorization

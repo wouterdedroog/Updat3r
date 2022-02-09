@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\ApiController;
 
 use App\Http\Controllers\Controller;
-use App\Project;
-use App\Update;
+use App\Models\Project;
+use App\Models\Update;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -31,7 +31,7 @@ class ProjectController extends Controller
     {
         if ($filter == 'latest') {
             $filter = 1;
-        } 
+        }
 
         $project = $request->project;
 

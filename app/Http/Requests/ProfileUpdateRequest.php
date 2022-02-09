@@ -35,10 +35,9 @@ class ProfileUpdateRequest extends FormRequest
                 'current_password',
             ],
             'password' => [
-                'sometimes' => [
-                    'confirmed',
-                    Password::min(8)->letters()->mixedCase()->symbols()
-                ],
+                'nullable',
+                'confirmed',
+                Password::min(8)->letters()->mixedCase()->symbols()
             ],
         ];
     }

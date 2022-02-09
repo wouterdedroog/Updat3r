@@ -13,8 +13,8 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use PragmaRX\Google2FAQRCode\Google2FA;
-use App\TwoFactorMethod;
-use App\User;
+use App\Models\TwoFactorMethod;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TwoFactorMethodController extends Controller

@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Project;
+use App\Models\Project;
 
 class CheckApiLegacyAuthorization
 {
