@@ -123,7 +123,9 @@ class TwoFactorMethodController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param TwoFactorMethod $twoFactorMethod
+     * @param Request $request
+     * @param User $user
+     * @param TwoFactorMethod $twofactormethod
      * @return RedirectResponse
      */
     public function destroy(Request $request, User $user, TwoFactorMethod $twofactormethod)
@@ -140,6 +142,7 @@ class TwoFactorMethodController extends Controller
      * Verify the 2FA OTP
      *
      * @param Request $request
+     * @return RedirectResponse
      */
     public function verify_otp(Request $request)
     {

@@ -25,6 +25,16 @@ it('isn\'t possible to create a project when the name has less than 6 characters
     ])->assertSessionHasErrors('name');
 });
 
+it('isn\'t possible to create a project with a name that has already been taken', function () {
+    Project::factory(3)
+        ->for(User::factory())->create();
+
+    $project = Project::first();
+    $this->actingAs($project->user)->post(route('projects.store'), [
+        'name' => $project->name,
+    ])->assertSessionHasErrors('name', 'The name has already been taken.');
+});
+
 it('isn\'t possible to view someone else\'s a project', function () {
     $users = User::factory(5)
         ->has(Project::factory(5), 'projects')
@@ -47,6 +57,16 @@ it('is possible to rename a project', function () {
     ])->assertSuccessful();
 
     $this->assertDatabaseHas('projects', ['id' => $project->id, 'name' => $projectName]);
+});
+
+it('isn\'t possible to rename a project to an already existing project', function () {
+    Project::factory(3)
+        ->for(User::factory())->create();
+
+    $project = Project::first();
+    $this->actingAs($project->user)->put(route('projects.update', ['project' => $project]), [
+        'name' => Project::all()->last()->name,
+    ])->assertSessionHasErrors('name', 'The name has already been taken.');
 });
 
 it('is possible to delete a project', function () {

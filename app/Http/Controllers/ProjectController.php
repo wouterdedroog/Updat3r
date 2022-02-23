@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -45,15 +46,15 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param ProjectRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
-        $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
+        $data = $request->validated();
 
         $project = $request->user()->projects()->create([
-            'name' => $request->input('name'),
+            'name' => $data['name'],
             'api_key' => Str::uuid(),
         ]);
 
@@ -76,16 +77,16 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param ProjectRequest $request
      * @param Project $project
      * @return View
      */
-    public function update(Request $request, Project $project)
+    public function update(ProjectRequest $request, Project $project)
     {
-        $data = $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
+        $data = $request->validated();
 
         if (Storage::exists('updates/' . $project->name)) {
-            Storage::move('updates/' . $project->name, 'updates/' . $request['name']);
+            Storage::move('updates/' . $project->name, 'updates/' . $data['name']);
         }
 
         $project->update($data);
