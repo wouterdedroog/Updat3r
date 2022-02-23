@@ -22,7 +22,7 @@
         <div class="card">
             <h5 class="card-header">Release update</h5>
             <div class="card-body">
-                <form action="{{ route('updates.store', $project) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('projects.updates.store', ['project' => $project]) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <input name="project_id" type="hidden" value="{{ $project->id }}">
@@ -69,7 +69,7 @@
                 <p><strong>Public update:</strong> {{$update->public == 1 ? "Yes" : "No"}}</p>
                 <p><strong>Critical update:</strong> {{$update->critical == 1 ? "Yes" : "No"}}</p>
 
-                <form action="{{ route('updates.destroy', $update) }}" method="POST">
+                <form action="{{ route('projects.updates.destroy', ['project' => $project, 'update' => $update]) }}" method="POST">
                     @method('delete')
                     @csrf
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ver{{str_replace(".", "-", $update->version)}}">Change
@@ -92,7 +92,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('updates.update', $update) }}" method="POST">
+                        <form action="{{ route('projects.updates.update', ['project' => $project, 'update' => $update]) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="form-group">

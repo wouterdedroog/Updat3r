@@ -29,8 +29,8 @@ Route::middleware(['auth', '2fa'])->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('dashboard');
     Route::view('/documentation', 'dashboard.documentation')->name('documentation');
 
-    Route::resource('/projects', ProjectController::class)->except(['index', 'edit']);
-    Route::resource('/updates', UpdateController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('projects', ProjectController::class)->except(['index', 'edit']);
+    Route::resource('projects.updates', UpdateController::class)->only(['store', 'update', 'destroy']);
 
     Route::resource('users', UserController::class)->except(['index', 'create', 'store']);
     Route::resource('users.twofactormethods', TwoFactorMethodController::class)->except(['show', 'create', 'edit']);

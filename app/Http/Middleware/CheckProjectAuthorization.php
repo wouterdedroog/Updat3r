@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Models\Project;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckProjectAuthorization
@@ -11,17 +12,13 @@ class CheckProjectAuthorization
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  Request  $request
+     * @param  Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        $project = Project::find($request->route('project')->id);
-        if ($project == null) {
-            abort(404);
-        }
-        if (Auth::user()->id != $project->user_id) {
+        if (Auth::user()->id != $request->project->user_id) {
             abort(404);
         }
         return $next($request);

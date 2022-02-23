@@ -8,10 +8,13 @@ use function Pest\Faker\faker;
 it('is possible to create a project', function () {
     $user = User::factory()->create();
 
+    $projectName = faker()->regexify('[A-Za-z0-9]{8}');
     $this->actingAs($user)->post(route('projects.store'), [
-        'name' => faker()->regexify('[A-Za-z0-9]{8}'),
+        'name' => $projectName,
     ])->assertSessionHasNoErrors()
         ->assertRedirect(route('projects.show', ['project' => 1]));
+
+    $this->assertDatabaseHas('projects', ['name' => $projectName, 'user_id' => $user->id]);
 });
 
 it('isn\'t possible to create a project when the name has less than 6 characters', function () {
@@ -38,9 +41,12 @@ it('is possible to rename a project', function () {
     $project = Project::factory()
         ->for(User::factory())->create();
 
+    $projectName = faker()->regexify('[A-Za-z0-9]{8}');
     $this->actingAs($project->user)->put(route('projects.update', ['project' => $project]), [
-        'name' => faker()->regexify('[A-Za-z0-9]{8}'),
+        'name' => $projectName,
     ])->assertSuccessful();
+
+    $this->assertDatabaseHas('projects', ['id' => $project->id, 'name' => $projectName]);
 });
 
 it('is possible to delete a project', function () {
@@ -50,4 +56,6 @@ it('is possible to delete a project', function () {
     $this->actingAs($project->user)->delete(route('projects.destroy', ['project' => $project]))
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('dashboard'));
+
+    $this->assertDatabaseMissing('projects', $project->attributesToArray());
 });
