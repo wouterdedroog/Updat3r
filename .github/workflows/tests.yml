@@ -1,7 +1,7 @@
 on: push
 name: Tests
 jobs:
-  phpunit:
+  pest:
     runs-on: ubuntu-latest
 
     services:
