@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use function Pest\Faker\faker;
 
 it('is possible to register', function() {
@@ -13,6 +14,8 @@ it('is possible to register', function() {
 
 
 it('is impossible to register with an existing email', function () {
+    User::factory()->create();
+
     $this->post(route('register'), [
         'name' => faker()->name,
         'email' => App\Models\User::first()->email,

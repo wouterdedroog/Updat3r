@@ -82,11 +82,6 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
-        if (Project::where('name', '=', $request['name'])->count() > 0) {
-            return view('dashboard.show', [
-                'project' => $project
-            ])->with('error', 'Another project with this name exists!');
-        }
 
         if (Storage::exists('updates/' . $project->name)) {
             Storage::move('updates/' . $project->name, 'updates/' . $request['name']);
