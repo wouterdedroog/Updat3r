@@ -18,7 +18,7 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->regexify('[A-Za-z0-9]{8}'),
             'api_key' => $this->faker->uuid()
         ];
     }

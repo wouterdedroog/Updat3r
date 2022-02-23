@@ -19,7 +19,7 @@ class CheckUpdateAuthorization
     public function handle($request, Closure $next)
     {
         //Store function
-        if ($request->has('project_id')) {
+        if ($request->has('project_id') || !$request->route('update')) {
             $project = Project::find($request['project_id']);
             if ($project == null) {
                 abort(404);

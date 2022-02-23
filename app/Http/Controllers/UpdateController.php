@@ -62,7 +62,11 @@ class UpdateController extends Controller
      */
     public function update(Request $request, Update $update)
     {
-        $this->validate($request, ['changeversion' => 'required|regex:/^([0-9A-Za-z-\. ])+$/', 'changecritical' => 'required', 'changepublic' => 'required']);
+        $this->validate($request, [
+            'changeversion' => 'required|regex:/^([0-9A-Za-z-\. ])+$/',
+            'changecritical' => 'required',
+            'changepublic' => 'required']
+        );
 
         $update->update([
             'version' => $request['changeversion'],
