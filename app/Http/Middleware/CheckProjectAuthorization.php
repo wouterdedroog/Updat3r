@@ -21,6 +21,10 @@ class CheckProjectAuthorization
         if (Auth::user()->id != $request->project->user_id) {
             abort(404);
         }
+        if ($request->has('update') && $request->update->project_id != $request->project->id) {
+            abort(404);
+        }
+
         return $next($request);
     }
 }

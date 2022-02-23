@@ -33,20 +33,20 @@
                         <p style="margin: 10px 0px 5px 0px;">Should this build be public right away?</p>
                         <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-primary active">
-                                <input type="radio" name="public" id="public" value="true" checked> Public
+                                <input type="radio" name="public" id="public" value="1" checked> Public
                             </label>
                             <label class="btn btn-primary">
-                                <input type="radio" name="public" id="public" value="false"> Not public
+                                <input type="radio" name="public" id="public" value="0"> Not public
                             </label>
                         </div>
                         <p style="margin: 5px 0px 5px 0px;">Is this a critical update?
                         </p>
                         <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-primary">
-                                <input type="radio" name="critical" id="critical" value="true"> Critical
+                                <input type="radio" name="critical" id="critical" value="1"> Critical
                             </label>
                             <label class="btn btn-primary active">
-                                <input type="radio" name="critical" id="critical" value="false" checked> Not critical
+                                <input type="radio" name="critical" id="critical" value="0" checked> Not critical
                             </label>
                         </div>
                         <br>
@@ -96,20 +96,19 @@
                             @csrf
                             @method('PUT')
                             <div class="form-group">
-                                <label for="changeversion">Version:
+                                <label for="version">Version:
                                 </label>
-                                <input class="form-control form-control-lg" id="changeversion" name="changeversion"
+                                <input class="form-control form-control-lg" id="version" name="version"
                                     type="text" placeholder="1.0" autocomplete="off"
                                     value="{{ $update->version }}" required>
-                                <p style="margin: 10px 0px 5px 0px;">Should this build be public?
-                                </p>
+                                <p style="margin: 10px 0px 5px 0px;">Should this build be public?</p>
                                 <div class="btn-group" data-toggle="buttons">
                                     <label class="btn btn-primary {{$update->public == 1 ? "active" : ""}}">
-                                        <input type="radio" name="changepublic" id="changepublic" value="true"
+                                        <input type="radio" name="public" id="public" value="1"
                                             {{$update->public == 1? "checked" : ""}}> Public
                                     </label>
                                     <label class="btn btn-primary {{$update->public == 1 ? "" : "active"}}">
-                                        <input type="radio" name="changepublic" id="changepublic" value="false"
+                                        <input type="radio" name="public" id="public" value="0"
                                             {{$update->public == 1 ? "" : "checked"}}> Not
                                         public
                                     </label>
@@ -118,11 +117,11 @@
                                 </p>
                                 <div class="btn-group" data-toggle="buttons">
                                     <label class="btn btn-primary {{$update->critical == 1 ? "active" : ""}}">
-                                        <input type="radio" name="changecritical" id="changecritical" value="true"
+                                        <input type="radio" name="critical" id="critical" value="1"
                                             {{$update->critical == 1 ? "checked" : ""}}> Critical
                                     </label>
                                     <label class="btn btn-primary {{$update->critical == 1 ? "" : "active"}}">
-                                        <input type="radio" name="changecritical" id="changecritical" value="false"
+                                        <input type="radio" name="critical" id="critical" value="0"
                                             {{$update->critical == 1 ? "" : "checked"}}> Not critical
                                     </label>
                                 </div>

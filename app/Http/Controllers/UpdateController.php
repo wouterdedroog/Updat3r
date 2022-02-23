@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateRequest;
+use App\Http\Requests\UpdateUpdateRequest;
 use App\Models\Update;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class UpdateController extends Controller
 {
@@ -17,40 +18,25 @@ class UpdateController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth.project')->only(['store', 'update', 'destroy']);
+        $this->middleware('auth.project');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StoreUpdateRequest $request
      * @param Project $project
      * @return RedirectResponse
      */
-    public function store(Request $request, Project $project)
+    public function store(StoreUpdateRequest $request, Project $project)
     {
-        $this->validate($request, [
-            'version' => 'required|regex:/^([0-9A-Za-z-\. ])+$/',
-            'critical' => 'required',
-            'public' => 'required',
-            'updatefile' => 'required|file|max:2000'
-        ]);
-
-        if ($project->updates->pluck('version')->contains($request['version'])) {
-            return redirect(route('projects.show', $project))->with('error', 'You already have a version with this name.');
-        }
-
+        $data = $request->validated();
         $extension = $request->file('updatefile')->getClientOriginalExtension();
 
-        $fileName = sprintf('%s.%s', $request['version'], $extension);
+        $fileName = sprintf('%s.%s', $data['version'], $extension);
         $request->file('updatefile')->storeAs('updates/' . $project->name, $fileName);
 
-        $project->updates()->create([
-            'version' => $request['version'],
-            'critical' => $request['critical'] == 'true' ? 1 : 0,
-            'public' => $request['public'] == 'true' ? 1 : 0,
-            'filename' => $request['version'] . '.' . $extension,
-        ]);
+        $project->updates()->create(collect($data)->except(['updatefile'])->put('filename', $fileName)->toArray());
 
         return redirect(route('projects.show', $project));
     }
@@ -58,24 +44,14 @@ class UpdateController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateUpdateRequest $request
      * @param Project $project
      * @param Update $update
      * @return RedirectResponse
      */
-    public function update(Request $request, Project $project, Update $update)
+    public function update(UpdateUpdateRequest $request, Project $project, Update $update)
     {
-        $this->validate($request, [
-            'changeversion' => 'required|regex:/^([0-9A-Za-z-\. ])+$/',
-            'changecritical' => 'required',
-            'changepublic' => 'required']
-        );
-
-        $update->update([
-            'version' => $request['changeversion'],
-            'critical' => $request['changecritical'] == 'true' ? 1 : 0,
-            'public' => $request['changepublic'] == 'true' ? 1 : 0,
-        ]);
+        $update->update($request->validated());
 
         return redirect(route('projects.show', [
             'project' => $project
@@ -85,6 +61,7 @@ class UpdateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param Project $project
      * @param Update $update
      * @return RedirectResponse
      */

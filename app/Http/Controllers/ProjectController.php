@@ -52,9 +52,8 @@ class ProjectController extends Controller
     {
         $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
 
-        $project = Project::create([
+        $project = $request->user()->projects()->create([
             'name' => $request->input('name'),
-            'user_id' => $request->user()->id,
             'api_key' => Str::uuid(),
         ]);
 
@@ -83,13 +82,13 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
+        $data = $this->validate($request, ['name' => 'required|unique:projects|min:6|regex:/^([0-9A-Za-z- ])+$/']);
 
         if (Storage::exists('updates/' . $project->name)) {
             Storage::move('updates/' . $project->name, 'updates/' . $request['name']);
         }
 
-        $project->update(['name' => $request['name']]);
+        $project->update($data);
 
         return view('dashboard.show', [
             'project' => $project
