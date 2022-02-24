@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use PragmaRX\Google2FA\Google2FA;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -26,7 +26,7 @@ class UserController extends Controller
      * Display the specified user.
      *
      * @param User $user
-     * @return Response
+     * @return View
      */
     public function show(User $user)
     {
@@ -37,7 +37,7 @@ class UserController extends Controller
      * Show the form for editing users.
      *
      * @param User $user
-     * @return Response
+     * @return View
      */
     public function edit(User $user)
     {
@@ -49,7 +49,7 @@ class UserController extends Controller
      *
      * @param ProfileUpdateRequest $request
      * @param User $user
-     * @return Response
+     * @return RedirectResponse
      */
     public function update(ProfileUpdateRequest $request, User $user)
     {
@@ -61,15 +61,13 @@ class UserController extends Controller
         }
 
         if ($user->update($data)) {
-            return redirect(route('users.show', ['user' => $user]))
-                ->with([
-                    'success' => 'Successfully updated your personal information'
-                ]);
+            return redirect(route('users.show', ['user' => $user]))->with([
+                'success' => 'Successfully updated your personal information'
+            ]);
         } else {
-            return redirect(route('users.edit', ['user' => $user]))
-                ->with([
-                    'error' => 'Something went wrong when attempting to change your personal information'
-                ]);
+            return redirect(route('users.edit', ['user' => $user]))->with([
+                'error' => 'Something went wrong when attempting to change your personal information'
+            ]);
         }
     }
 
@@ -77,11 +75,15 @@ class UserController extends Controller
      * Remove the specified user from storage.
      *
      * @param User $user
-     * @return Response
+     * @return RedirectResponse
      */
     public function destroy(User $user)
     {
+        $projectNames = $user->projects->pluck('name')->toArray();
         if ($user->delete()) {
+            foreach ($projectNames as $projectName) {
+                Storage::deleteDirectory('updates/' . $projectName);
+            }
             return redirect(route('login'))->with('success', 'Your account has been deleted.');
         }
         return redirect(route('profile.show', ['user' => $user]))

@@ -6,7 +6,6 @@ use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -104,6 +103,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        Storage::deleteDirectory('updates/' . $project->name);
         $project->updates()->delete();
         $project->delete();
         return redirect(route('dashboard'));
