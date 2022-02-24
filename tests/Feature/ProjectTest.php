@@ -4,15 +4,13 @@ use App\Models\Project;
 use App\Models\User;
 use function Pest\Faker\faker;
 
-
 it('is possible to create a project', function () {
     $user = User::factory()->create();
 
     $projectName = faker()->regexify('[A-Za-z0-9]{8}');
     $this->actingAs($user)->post(route('projects.store'), [
         'name' => $projectName,
-    ])->assertSessionHasNoErrors()
-        ->assertRedirect(route('projects.show', ['project' => 1]));
+    ])->assertSessionHasNoErrors();
 
     $this->assertDatabaseHas('projects', ['name' => $projectName, 'user_id' => $user->id]);
 });
