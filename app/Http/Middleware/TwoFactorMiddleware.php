@@ -20,17 +20,17 @@ class TwoFactorMiddleware
         if (!Auth::check()) {
             return abort(401);
         }
-        $two_factor_methods = $request->user()->two_factor_methods()
+        $twoFactorMethods = $request->user()->twoFactorMethods()
             ->select(['id', 'google2fa_secret'])
             ->where('enabled', true)
             ->get();
 
-        if ($two_factor_methods->isEmpty()) {
+        if ($twoFactorMethods->isEmpty()) {
             return $next($request);
         }
 
         if ($request->session()->has('2fa_method')
-            && $two_factor_methods->contains('id', $request->session()->get('2fa_method'))) {
+            && $twoFactorMethods->contains('id', $request->session()->get('2fa_method'))) {
             return $next($request);
         }
 

@@ -63,15 +63,15 @@ class TwoFactorMethodController extends Controller
                 Yubikey::verify($data['yubikey_otp'], null, false, null, 2);
 
                 $prefix = Yubikey::parsePasswordOTP($data['yubikey_otp'])['prefix'];
-                $two_factor_method = new TwoFactorMethod([
+                $twoFactorMethod = new TwoFactorMethod([
                     'name' => $data['name'],
                     'yubikey_otp' => encrypt($prefix)
                 ]);
-                $user->two_factor_methods()->save($two_factor_method);
+                $user->twoFactorMethods()->save($twoFactorMethod);
                 $request->session()->flash('success', 'Successfully added a new 2FA method');
 
                 // Update session to prevent user needing to type in OTP
-                $request->session()->put('2fa_method', $two_factor_method->id);
+                $request->session()->put('2fa_method', $twoFactorMethod->id);
             } catch (Exception $exception) {
                 if ($exception->getMessage() == 'REPLAYED_OTP') {
                     $request->session()->flash('error', 'The supplied OTP has been used before.');
@@ -82,15 +82,15 @@ class TwoFactorMethodController extends Controller
             $google2fa = new Google2FA();
 
             if ($google2fa->verifyKey($data['two_factor_secret'], $data['two_factor_check'], 8)) {
-                $two_factor_method = new TwoFactorMethod([
+                $twoFactorMethod = new TwoFactorMethod([
                     'name' => $data['name'],
                     'google2fa_secret' => encrypt($data['two_factor_secret'])
                 ]);
-                $user->two_factor_methods()->save($two_factor_method);
+                $user->twoFactorMethods()->save($twoFactorMethod);
                 $request->session()->flash('success', 'Successfully added a new 2FA method');
 
                 // Update session to prevent user needing to type in OTP
-                $request->session()->put('2fa_method', $two_factor_method->id);
+                $request->session()->put('2fa_method', $twoFactorMethod->id);
             } else {
                 $request->session()->flash('error', 'Invalid 2FA code supplied. Please try again!');
             }
@@ -153,18 +153,18 @@ class TwoFactorMethodController extends Controller
                 'max:44'
             ]
         ]);
-        $two_factor_methods = $request->user()->two_factor_methods()
+        $twoFactorMethods = $request->user()->twoFactorMethods()
             ->select(['id', 'google2fa_secret', 'yubikey_otp'])
             ->where('enabled', true)
             ->get();
 
         $google2fa = new Google2FA();
-        $correctOtps = $two_factor_methods->filter(function ($two_factor_method) use ($google2fa, $data) {
-            if ($two_factor_method->google2fa_secret != null) {
-                return $google2fa->verifyKey(decrypt($two_factor_method->google2fa_secret), $data['otp'], 2);
+        $correctOtps = $twoFactorMethods->filter(function ($twoFactorMethod) use ($google2fa, $data) {
+            if ($twoFactorMethod->google2fa_secret != null) {
+                return $google2fa->verifyKey(decrypt($twoFactorMethod->google2fa_secret), $data['otp'], 2);
             } else {
                 $parsedOtp = Yubikey::parsePasswordOTP($data['otp']);
-                if ($parsedOtp && decrypt($two_factor_method->yubikey_otp) == $parsedOtp['prefix']) {
+                if ($parsedOtp && decrypt($twoFactorMethod->yubikey_otp) == $parsedOtp['prefix']) {
                     try {
                         // Validate yubikey with a timeout of max. 2 seconds
                         return Yubikey::verify($data['otp'], null, false, null, 2);

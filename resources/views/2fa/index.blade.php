@@ -13,7 +13,7 @@
             <span>Your 2FA Methods</span>
         </h5>
         <div class="card-body">
-            @if(count($user->two_factor_methods) == 0)
+            @if(count($user->twoFactorMethods) == 0)
                 <p>You currently do not have any 2FA methods set up.</p>
             @else
                 <table class="table col-10">
@@ -27,26 +27,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($user->two_factor_methods as $two_factor_method)
+                        @foreach($user->twoFactorMethods as $twoFactorMethod)
                             <tr>
-                                <td class="text-{{ $two_factor_method->enabled ? 'success' : 'danger' }}">
-                                    <i class="far fa-{{ $two_factor_method->enabled ? 'check-circle' : 'times-circle' }}"></i>
+                                <td class="text-{{ $twoFactorMethod->enabled ? 'success' : 'danger' }}">
+                                    <i class="far fa-{{ $twoFactorMethod->enabled ? 'check-circle' : 'times-circle' }}"></i>
                                 </td>
-                                <td>{{ $two_factor_method->name }}</td>
-                                <td>{{ isset($two_factor_method->google2fa_secret) ? 'Mobile Device' : 'Yubikey' }}</td>
+                                <td>{{ $twoFactorMethod->name }}</td>
+                                <td>{{ isset($twoFactorMethod->google2fa_secret) ? 'Mobile Device' : 'Yubikey' }}</td>
                                 <td>
-                                    <form action="{{ route('users.twofactormethods.update', ['user' => $user, 'twofactormethod' => $two_factor_method]) }}"
+                                    <form action="{{ route('users.twofactormethods.update', ['user' => $user, 'twofactormethod' => $twoFactorMethod]) }}"
                                         method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" name="enabled" class="btn btn-{{$two_factor_method->enabled ? 'outline-danger' : 'brand'}}"
-                                            value="{{ $two_factor_method->enabled ? 0 : 1 }}">
-                                            {{ $two_factor_method->enabled ? 'Disable' : 'Enable' }}
+                                        <button type="submit" name="enabled" class="btn btn-{{$twoFactorMethod->enabled ? 'outline-danger' : 'brand'}}"
+                                            value="{{ $twoFactorMethod->enabled ? 0 : 1 }}">
+                                            {{ $twoFactorMethod->enabled ? 'Disable' : 'Enable' }}
                                         </button>
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="{{ route('users.twofactormethods.destroy', ['user' => $user, 'twofactormethod' => $two_factor_method]) }}" method="POST">
+                                    <form action="{{ route('users.twofactormethods.destroy', ['user' => $user, 'twofactormethod' => $twoFactorMethod]) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn text-danger">

@@ -42,7 +42,7 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
-    public function two_factor_methods() {
+    public function twoFactorMethods() {
         return $this->hasMany(TwoFactorMethod::class);
     }
 }

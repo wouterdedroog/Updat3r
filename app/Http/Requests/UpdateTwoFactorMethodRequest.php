@@ -16,9 +16,8 @@ class UpdateTwoFactorMethodRequest extends FormRequest
     {
         return [
             'enabled' => [
-                'sometimes',
-                'integer',
-                'in:0,1'
+                'required',
+                'boolean'
             ]
         ];
     }

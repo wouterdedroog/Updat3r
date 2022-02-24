@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TwoFactorMethod extends Model
 {
+    use HasFactory;
 
     protected $fillable = ['name', 'user_id', 'google2fa_secret', 'yubikey_otp', 'enabled'];
     protected $hidden = ['google2fa_secret', 'yubikey_otp'];
