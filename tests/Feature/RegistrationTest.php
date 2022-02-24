@@ -1,32 +1,24 @@
 <?php
 
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use function Pest\Faker\faker;
 
-it('is possible to register', function() {
-    $name = faker()->name;
-    $email = faker()->email;
-    $this->post(route('register'), [
-        'name' => $name,
-        'email' => $email,
-        'password' => 'Welkom01!',
-        'password_confirmation' => 'Welkom01!',
-    ])->assertRedirect(route('dashboard'));
-
-    $this->assertDatabaseHas('users', [
-        'name' => $name,
-        'email' => $email,
-    ]);
-});
-
-
-it('is impossible to register with an existing email', function () {
-    User::factory()->create();
-
-    $this->post(route('register'), [
+it('is possible to register')
+    ->post('/register', [
         'name' => faker()->name,
-        'email' => App\Models\User::first()->email,
+        'email' => faker()->email,
         'password' => 'Welkom01!',
         'password_confirmation' => 'Welkom01!',
-    ])->assertSessionHasErrors('email');
-});
+    ])
+    ->assertSessionHasNoErrors()
+    ->assertRedirect(RouteServiceProvider::HOME);
+
+it('is impossible to register with an existing email')
+    ->tap(fn() => User::factory()->create(['email' => 'wouter@example.com']))
+    ->post('/register', [
+        'name' => faker()->name,
+        'email' => 'wouter@example.com',
+        'password' => faker()->password,
+        'password_confirmation' => faker()->password,
+    ])->assertSessionHasErrors(['email' => 'The email has already been taken.']);

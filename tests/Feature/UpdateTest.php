@@ -83,7 +83,7 @@ it('is impossible to create an updates with an already existing version', functi
         'critical' => '1',
         'public' => '1',
         'updatefile' => UploadedFile::fake()->create('plugin.jar'),
-    ])->assertSessionHasErrors('version', 'The version has already been taken.');
+    ])->assertSessionHasErrors(['version' => 'The version has already been taken.']);
 });
 
 it('is impossible to change an updates to an already existing version', function () {
@@ -100,7 +100,7 @@ it('is impossible to change an updates to an already existing version', function
         'version' => $project->updates->last()->version,
         'critical' => '1',
         'public' => '1'
-    ])->assertSessionHasErrors('version', 'The version has already been taken.');
+    ])->assertSessionHasErrors(['version' => 'The version has already been taken.']);
 });
 
 it('is possible to have duplicate versions between different projects when you create an update', function () {

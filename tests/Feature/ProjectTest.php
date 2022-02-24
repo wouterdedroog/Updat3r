@@ -22,7 +22,7 @@ it('isn\'t possible to create a project when the name has less than 6 characters
 
     $this->actingAs($user)->post(route('projects.store'), [
         'name' => faker()->regexify('[A-Za-z0-9]{4}'),
-    ])->assertSessionHasErrors('name');
+    ])->assertSessionHasErrors(['name' => 'The name must be at least 6 characters.']);
 });
 
 it('isn\'t possible to create a project with a name that has already been taken', function () {
@@ -32,7 +32,7 @@ it('isn\'t possible to create a project with a name that has already been taken'
     $project = Project::first();
     $this->actingAs($project->user)->post(route('projects.store'), [
         'name' => $project->name,
-    ])->assertSessionHasErrors('name', 'The name has already been taken.');
+    ])->assertSessionHasErrors(['name' => 'The name has already been taken.']);
 });
 
 it('isn\'t possible to view someone else\'s a project', function () {
@@ -66,7 +66,7 @@ it('isn\'t possible to rename a project to an already existing project', functio
     $project = Project::first();
     $this->actingAs($project->user)->put(route('projects.update', ['project' => $project]), [
         'name' => Project::all()->last()->name,
-    ])->assertSessionHasErrors('name', 'The name has already been taken.');
+    ])->assertSessionHasErrors(['name' => 'The name has already been taken.']);
 });
 
 it('is possible to delete a project', function () {
