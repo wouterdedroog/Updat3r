@@ -4,7 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder;
 
+/**
+ * The TwoFactorMethod model
+ * @mixin Builder
+ * @package App\Models
+ */
 class TwoFactorMethod extends Model
 {
     use HasFactory;
@@ -12,7 +19,7 @@ class TwoFactorMethod extends Model
     protected $fillable = ['name', 'user_id', 'google2fa_secret', 'yubikey_otp', 'enabled'];
     protected $hidden = ['google2fa_secret', 'yubikey_otp'];
 
-    public function user() {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 }

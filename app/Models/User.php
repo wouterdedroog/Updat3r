@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * The User model
+ * @mixin Builder
+ * @package App\Models
+ */
 class User extends Authenticatable
 {
     use Notifiable, HasFactory;
@@ -38,11 +44,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function projects() {
+    public function projects(): HasMany {
         return $this->hasMany(Project::class);
     }
 
-    public function twoFactorMethods() {
+    public function twoFactorMethods(): HasMany {
         return $this->hasMany(TwoFactorMethod::class);
     }
 }
