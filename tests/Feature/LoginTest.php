@@ -21,5 +21,5 @@ it('is not possible to login with an incorrect password')
     ->tap(fn() => User::factory(['email' => 'wouter@example.com'])->create())
     ->post('/login', [
         'email' => 'wouter@example.com',
-        'password' => faker()->password,
+        'password' => faker()->password(),
     ])->assertSessionHasErrors('email');

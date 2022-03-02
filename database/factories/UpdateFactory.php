@@ -20,8 +20,8 @@ class UpdateFactory extends Factory
         $version = $this->faker->semver(false, false);
         return [
             'version' => $version,
-            'critical' => $this->faker->boolean,
-            'public' => $this->faker->boolean,
+            'critical' => $this->faker->boolean(),
+            'public' => $this->faker->boolean(),
             'filename' => $version . '.' . $this->faker->fileExtension(),
         ];
     }

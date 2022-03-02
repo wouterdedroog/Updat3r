@@ -10,7 +10,7 @@ use function Pest\Faker\faker;
 it('is possible to change your name and email', function () {
     $user = User::factory()->create();
 
-    $userData = ['name' => faker()->name, 'email' => faker()->email];
+    $userData = ['name' => faker()->name(), 'email' => faker()->email()];
     $this->actingAs($user)->put(route('users.update', ['user' => $user]), $userData)
         ->assertRedirect(route('users.show', ['user' => $user]))
         ->assertSessionHasNoErrors();
@@ -67,8 +67,8 @@ test('deleting your account will delete all data', function () {
     $this->actingAs($user)
         ->post(route('projects.updates.store', ['project' => $project]), [
             'version' => faker()->semver(false, false),
-            'critical' => faker()->boolean ? '1' : '0',
-            'public' => faker()->boolean ? '1' : '0',
+            'critical' => faker()->boolean() ? '1' : '0',
+            'public' => faker()->boolean() ? '1' : '0',
             'updatefile' => UploadedFile::fake()->create('plugin.jar'),
         ])->assertSessionHasNoErrors();
 

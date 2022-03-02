@@ -14,7 +14,7 @@ it('is possible to create two factor methods', function () {
     $secret = $google2fa->generateSecretKey(32);
     $otp = $google2fa->getCurrentOtp($secret);
 
-    $userData = ['name' => faker()->word, 'two_factor_check' => $otp, 'two_factor_secret' => $secret];
+    $userData = ['name' => faker()->word(), 'two_factor_check' => $otp, 'two_factor_secret' => $secret];
     $this->actingAs($user)->post(route('users.twofactormethods.store', ['user' => $user]), $userData)
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('users.twofactormethods.index', ['user' => $user]))
