@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTwoFactorMethodRequest;
 use App\Http\Requests\UpdateTwoFactorMethodRequest;
+use App\Http\Requests\VerifyOtpRequest;
 use App\Providers\RouteServiceProvider;
 use Exception;
 use Illuminate\Support\Arr;
@@ -141,18 +142,13 @@ class TwoFactorMethodController extends Controller
     /**
      * Verify the 2FA OTP
      *
-     * @param Request $request
+     * @param VerifyOtpRequest $request
      * @return RedirectResponse
      */
-    public function verify_otp(Request $request)
+    public function verify_otp(VerifyOtpRequest $request)
     {
-        $data = $request->validate([
-            'otp' => [
-                'required',
-                'min:6',
-                'max:44'
-            ]
-        ]);
+        $data = $request->validated();
+
         $twoFactorMethods = $request->user()->twoFactorMethods()
             ->select(['id', 'google2fa_secret', 'yubikey_otp'])
             ->where('enabled', true)

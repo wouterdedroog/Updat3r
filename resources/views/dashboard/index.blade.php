@@ -10,7 +10,7 @@
             <div class="card-body">
                 <h5 class="text-muted">Projects</h5>
                 <div class="metric-value d-inline-block">
-                    <h1 class="mb-1">{{ count(Auth::user()->projects) }}</h1>
+                    <h1 class="mb-1">{{ $user->projects()->count() }}</h1>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <h5 class="text-muted">Updates</h5>
                 <div class="metric-value d-inline-block">
                     <h1 class="mb-1">
-                        {{ DB::table('updates')->leftJoin('projects', 'updates.project_id', '=', 'projects.id')->where('projects.user_id', '=', Auth::user()->id)->count() }}
+                        {{ $user->updates()->count() }}
                     </h1>
                 </div>
             </div>
