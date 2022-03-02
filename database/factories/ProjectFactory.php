@@ -19,7 +19,8 @@ class ProjectFactory extends Factory
     {
         return [
             'name' => $this->faker->regexify('[A-Za-z0-9]{8}'),
-            'api_key' => $this->faker->uuid()
+            'api_key' => $this->faker->uuid(),
+            'legacy_api_key' => $this->faker->regexify('[A-Za-z0-9]{32}')
         ];
     }
 }

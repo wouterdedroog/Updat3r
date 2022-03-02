@@ -16,6 +16,8 @@ class CheckApiLegacyAuthorization
      */
     public function handle($request, Closure $next)
     {
+        // It would be better to return the status as an integer, not a string, and use proper error codes
+        // like 403, but for the sake of compatibility it's better to keep it as-is.
         $request->headers->set('Accept', 'application/json');
 
         if ($request->key == null) {

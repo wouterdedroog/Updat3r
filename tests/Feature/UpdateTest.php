@@ -4,9 +4,7 @@ use App\Models\Project;
 use App\Models\Update;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use function Pest\Faker\faker;
-
 
 it('is possible to create an update', function () {
     $user = User::factory()

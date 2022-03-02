@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\ApiController;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Project;
-use App\Models\Update;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LegacyProjectController extends Controller
 {
@@ -24,50 +25,43 @@ class LegacyProjectController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function show(Request $request)
     {
-        $request->validate(['show' => [ 'regex:/^([0-9]+|latest)$/']]);
+        $data = $request->validate(['show' => ['regex:/^([0-9]+|latest)$/']]);
 
-        $filter = $request->show == null ? 9999 : $request->show;
+        $filter = Arr::has($data, 'show') == null ? 9999 : $data['show'];
         if ($filter == 'latest') {
             $filter = 1;
         }
 
         $project = $request->project;
 
-        $retrievedUpdates = Update::where([
-            ['project_id', '=', $project->id],
-            ['public', '=', 1]
-        ])->orderBy('created_at', 'desc')
-            ->take($filter)
+        $updates = $project->updates()
+            ->where('public', true)
+            ->orderBy('created_at', 'desc')
+            ->limit($filter)
             ->get();
 
-
-        $updates = [];
-        foreach ($retrievedUpdates as $update) {
-            if ($update->public != 1) {
-                continue;
-            }
-            $updates[] = [
+        $updates = $updates->map(function ($update) use ($project, $request) {
+            return [
                 'version' => $update->version,
                 'download' => url(sprintf('/api/v1/updates/download/?project=%s&key=%s&version=%s', $project->name, $request->key, $update->version)),
                 'releaseDate' => $update->created_at->toDateTimeString(),
                 'critical' => $update->critical == 1,
             ];
-        }
+        });
 
-        return response()
-            ->json(['status' => 200, 'updates' => $updates], 200, [], JSON_UNESCAPED_SLASHES);
+        return response()->json(['status' => 200, 'updates' => $updates], 200, [], JSON_UNESCAPED_SLASHES);
     }
 
     /**
-     * Display the specified resource.
+     * Download the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse|StreamedResponse
      */
     public function download(Request $request)
     {
@@ -76,21 +70,19 @@ class LegacyProjectController extends Controller
                 ->json(['status' => 400, 'message' => 'No version given!'], 400);
         }
         $project = $request->project;
-        $update = Update::where([
-            ['version', '=', $request->version],
-            ['project_id', '=', $project->id],
-        ])->first();
+        $update = $project->updates()->where('version', '=', $request->version)
+            ->where('public', true)
+            ->first();
         if ($update == null) {
             return response()
                 ->json(['status' => 400, 'message' => 'Invalid version provided!'], 400);
         }
 
         $path = 'updates/' . $project->name . '/' . $update->filename;
-        if (file_exists(Storage::path($path))) {
-            return Storage::download($path);
-        } else {
+        if (!Storage::exists($path)) {
             return response()
                 ->json(['status' => 400, 'message' => 'Update file not found!'], 400);
         }
+        return Storage::download($path);
     }
 }
