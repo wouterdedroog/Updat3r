@@ -19,6 +19,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/v1/updates/', [LegacyProjectController::class, 'show']);
 Route::get('/v1/updates/download/', [LegacyProjectController::class, 'download']);
 
-Route::get('/v2/updates/download/{project}/{version}', [ProjectController::class, 'download']);
-Route::get('/v2/updates/{project}/{filter}', [ProjectController::class, 'show'])
+Route::get('/v2/updates/download/{project:name}/{version}', [ProjectController::class, 'download']);
+Route::get('/v2/updates/{project:name}/{filter}', [ProjectController::class, 'show'])
     ->where(['filter' => '([0-9]+|latest)']);
