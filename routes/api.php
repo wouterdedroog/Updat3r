@@ -16,9 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/v1/updates/', [LegacyProjectController::class, 'show']);
-Route::get('/v1/updates/download/', [LegacyProjectController::class, 'download']);
+Route::controller(LegacyProjectController::class)->prefix('/v1/updates')->name('api.v1.updates.')
+    ->group(function () {
+        Route::get('/', 'show')->name('show');
+        Route::get('/download/', 'download')->name('download');
+    });
 
-Route::get('/v2/updates/download/{project:name}/{version}', [ProjectController::class, 'download']);
-Route::get('/v2/updates/{project:name}/{filter}', [ProjectController::class, 'show'])
-    ->where(['filter' => '([0-9]+|latest)']);
+Route::controller(ProjectController::class)->prefix('/v2/updates')->name('api.v2.updates.')
+    ->group(function () {
+        Route::get('/{project:name}/{filter}', 'show')->where(['filter' => '([0-9]+|latest)'])->name('show');
+        Route::get('/download/{project:name}/{version}', 'download')->name('download');
+    });
