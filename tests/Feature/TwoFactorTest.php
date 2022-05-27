@@ -3,11 +3,10 @@
 use App\Models\TwoFactorMethod;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Hash;
-use PragmaRX\Google2FAQRCode\Google2FA;
+use PragmaRX\Google2FA\Google2FA;
 use function Pest\Faker\faker;
 
-it('is possible to create two factor methods', function () {
+it('is possible to create a two factor method', function () {
     $user = User::factory()->create();
 
     $google2fa = new Google2FA();
@@ -20,10 +19,14 @@ it('is possible to create two factor methods', function () {
         ->assertRedirect(route('users.twofactormethods.index', ['user' => $user]))
         ->assertSessionHas('2fa_method');
 
-    expect($user->twoFactorMethods)->toHaveCount(1);
+    $this->assertDatabaseHas('two_factor_methods', [
+        'user_id' => $user->id,
+        'name' => $userData['name']
+    ]);
+    expect(decrypt(TwoFactorMethod::first()->google2fa_secret))->toBe($secret);
 });
 
-it('is possible to disable two factor methods', function () {
+it('is possible to disable a two factor method', function () {
     $user = User::factory()
         ->has(TwoFactorMethod::factory()->enabled())
         ->create();
@@ -37,7 +40,7 @@ it('is possible to disable two factor methods', function () {
         ->assertSessionHas('success')
         ->assertRedirect(route('users.twofactormethods.index', ['user' => $user]));
 
-    expect($twofactormethod->fresh()->attributesToArray())->toMatchArray(['enabled' => false]);
+    expect($twofactormethod->fresh()->enabled)->toBeFalsy();
 });
 
 it('is possible to delete two factor methods', function () {
@@ -53,14 +56,11 @@ it('is possible to delete two factor methods', function () {
         ->assertSessionHas('success')
         ->assertRedirect(route('users.twofactormethods.index', ['user' => $user]));
 
-    expect($user->fresh()->twoFactorMethods)->toBeEmpty();
+    expect($user->twoFactorMethods()->count())->toBe(0);
 });
 
-it('is required to enter a 2FA when logging in with 2FA enabled', function () {
-    $user = User::factory()->has(TwoFactorMethod::factory())->create([
-        'email' => 'wouter@example.com',
-        'password' => Hash::make('Welkom01!')
-    ]);
+it('is required to enter a one-time password when logging in with 2FA enabled', function () {
+    $user = User::factory()->has(TwoFactorMethod::factory())->create();
 
     $this->actingAs($user)
         ->get(route('dashboard'))

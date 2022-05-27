@@ -84,7 +84,7 @@ it('is impossible to create an updates with an already existing version', functi
     ])->assertSessionHasErrors(['version' => 'The version has already been taken.']);
 });
 
-it('is impossible to change an updates to an already existing version', function () {
+it('is impossible to change an update to an already existing version', function () {
     $user = User::factory()
         ->has(Project::factory()->has(Update::factory(2)))
         ->create();

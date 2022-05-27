@@ -71,6 +71,7 @@ test('deleting your account will delete all data', function () {
             'public' => faker()->boolean() ? '1' : '0',
             'updatefile' => UploadedFile::fake()->create('plugin.jar'),
         ])->assertSessionHasNoErrors();
+    expect(Storage::exists('updates/' . $project->name))->toBeTrue();
 
     $this->actingAs($user)->delete(route('users.destroy', ['user' => $user]))
         ->assertRedirect(route('login'))

@@ -71,7 +71,7 @@ it('is possible to download an update', function () {
 
     $this->get(sprintf('/api/v2/updates/download/%s/%s', $project->name, $update->version), ['Authorization' => 'Bearer ' . $project->api_key])
         ->assertSuccessful()
-        ->assertDownload($update->fresh()->filename);
+        ->assertDownload($update->filename);
 });
 
 test('an error is thrown when the update file isn\'t found', function () {

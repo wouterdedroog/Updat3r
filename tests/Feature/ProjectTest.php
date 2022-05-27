@@ -19,7 +19,7 @@ it('isn\'t possible to create a project when the name has less than 6 characters
     $user = User::factory()->create();
 
     $this->actingAs($user)->post(route('projects.store'), [
-        'name' => faker()->regexify('[A-Za-z0-9]{4}'),
+        'name' => faker()->text(5),
     ])->assertSessionHasErrors(['name' => 'The name must be at least 6 characters.']);
 });
 
@@ -75,5 +75,5 @@ it('is possible to delete a project', function () {
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('dashboard'));
 
-    $this->assertDatabaseMissing('projects', $project->attributesToArray());
+    $this->assertDatabaseMissing('projects', ['id' => $project->id]);
 });

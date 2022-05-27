@@ -70,7 +70,7 @@ it('is possible to download an update', function () {
 
     $this->get(sprintf('/api/v1/updates/download/?project=%s&key=%s&version=%s', $project->name, $project->legacy_api_key, $update->version))
         ->assertSuccessful()
-        ->assertDownload($update->fresh()->filename);
+        ->assertDownload($update->filename);
 });
 
 test('an error is thrown when the update file isn\'t found', function () {
@@ -97,5 +97,8 @@ it('isn\'t possible to download a version that doesn\'t exist', function () {
 
     $this->get(sprintf('/api/v1/updates/download/?project=%s&key=%s&version=%s', $project->name, $project->legacy_api_key, faker()->semver(false, false)))
         ->assertStatus(400)
-        ->assertJsonStructure(['status', 'message']);
+        ->assertJson([
+            'status' => '400',
+            'message' => 'Invalid version provided!'
+        ]);
 });
