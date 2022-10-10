@@ -28,7 +28,7 @@ class TwoFactorMethodFactory extends Factory
         $google2fa = new Google2FA();
         return [
             'name' => $this->faker->word(),
-            'google2fa_secret' => encrypt($google2fa->generateSecretKey(32)),
+            'google2fa_secret' => $google2fa->generateSecretKey(32),
             'enabled' => true
         ];
     }

@@ -18,8 +18,13 @@ class TwoFactorMethod extends Model
 
     protected $fillable = ['name', 'user_id', 'google2fa_secret', 'yubikey_otp', 'enabled'];
     protected $hidden = ['google2fa_secret', 'yubikey_otp'];
+    protected $casts = [
+        'google2fa_secret' => 'encrypted',
+        'yubikey_otp' => 'encrypted',
+    ];
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }
