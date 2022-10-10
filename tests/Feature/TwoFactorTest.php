@@ -23,7 +23,9 @@ it('is possible to create a two factor method', function () {
         'user_id' => $user->id,
         'name' => $userData['name']
     ]);
-    expect(decrypt(TwoFactorMethod::first()->google2fa_secret))->toBe($secret);
+    // Test whether Google 2FA secret is stored encrypted
+    expect(TwoFactorMethod::first()->refresh()->getRawOriginal('google2fa_secret'))->not()->toBe($secret)
+        ->and(TwoFactorMethod::first()->google2fa_secret)->toBe($secret);
 });
 
 it('is possible to disable a two factor method', function () {
@@ -69,7 +71,7 @@ it('is required to enter a one-time password when logging in with 2FA enabled', 
 
 it('is possible to login with a valid 2FA code', function () {
     $user = User::factory()->has(TwoFactorMethod::factory())->create();
-    $secret = decrypt($user->twoFactorMethods->first()->google2fa_secret);
+    $secret = $user->twoFactorMethods->first()->google2fa_secret;
     $google2fa = new Google2FA();
     $otp = $google2fa->getCurrentOtp($secret);
 

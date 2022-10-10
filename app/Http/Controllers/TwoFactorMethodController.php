@@ -66,7 +66,7 @@ class TwoFactorMethodController extends Controller
                 $prefix = Yubikey::parsePasswordOTP($data['yubikey_otp'])['prefix'];
                 $twoFactorMethod = new TwoFactorMethod([
                     'name' => $data['name'],
-                    'yubikey_otp' => encrypt($prefix)
+                    'yubikey_otp' => $prefix
                 ]);
                 $user->twoFactorMethods()->save($twoFactorMethod);
                 $request->session()->flash('success', 'Successfully added a new 2FA method');
@@ -85,7 +85,7 @@ class TwoFactorMethodController extends Controller
             if ($google2fa->verifyKey($data['two_factor_secret'], $data['two_factor_check'], 8)) {
                 $twoFactorMethod = new TwoFactorMethod([
                     'name' => $data['name'],
-                    'google2fa_secret' => encrypt($data['two_factor_secret'])
+                    'google2fa_secret' => $data['two_factor_secret']
                 ]);
                 $user->twoFactorMethods()->save($twoFactorMethod);
                 $request->session()->flash('success', 'Successfully added a new 2FA method');
@@ -157,14 +157,14 @@ class TwoFactorMethodController extends Controller
         $google2fa = new Google2FA();
         $correctOtps = $twoFactorMethods->filter(function ($twoFactorMethod) use ($google2fa, $data) {
             if ($twoFactorMethod->google2fa_secret != null) {
-                return $google2fa->verifyKey(decrypt($twoFactorMethod->google2fa_secret), $data['otp'], 2);
+                return $google2fa->verifyKey($twoFactorMethod->google2fa_secret, $data['otp'], 2);
             } else {
                 $parsedOtp = Yubikey::parsePasswordOTP($data['otp']);
-                if ($parsedOtp && decrypt($twoFactorMethod->yubikey_otp) == $parsedOtp['prefix']) {
+                if ($parsedOtp && $twoFactorMethod->yubikey_otp == $parsedOtp['prefix']) {
                     try {
                         // Validate yubikey with a timeout of max. 2 seconds
                         return Yubikey::verify($data['otp'], null, false, null, 2);
-                    } catch (Exception $ex) {
+                    } catch (Exception) {
                         return false;
                     }
                 }
