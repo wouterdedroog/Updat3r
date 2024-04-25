@@ -32,6 +32,7 @@ jobs:
       - name: Prepare the application
         run: |
           cp .env.example .env
+          sed -i 's/UPDAT3R_REGISTRATION_ENABLED=true/UPDAT3R_REGISTRATION_ENABLED=false/'
           php artisan key:generate
 
       - name: Run migrations
