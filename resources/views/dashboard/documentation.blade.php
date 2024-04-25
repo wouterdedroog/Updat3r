@@ -53,7 +53,7 @@
                 </div>
                 <div class="codeheader" id="codeheader_java">(Java) Using {{ config('app.name', 'Updat3r') }} for your
                     Minecraft plugin</div>
-                <script src="https://gist.github.com/MrWouterNL/a0a7ec20fcc0df157fc8290ec6055cba.js"></script>
+                <script src="https://gist.github.com/wouterdedroog/a0a7ec20fcc0df157fc8290ec6055cba.js"></script>
             </div>
         </div>
     </div>

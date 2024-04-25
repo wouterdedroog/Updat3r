@@ -33,5 +33,7 @@
 @endsection
 
 @section('switch-button')
-    <a href="/register" class="footer-link">Register</a>
+    @if(Route::has('register'))
+        <a href="/register" class="footer-link">Register</a>
+    @endif
 @endsection

@@ -18,7 +18,11 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Auth::routes();
+Auth::routes([
+    // enable registration and password reset only if registration is enabled
+    'register' => config('updat3r.registration_enabled'),
+    'reset' => config('updat3r.registration_enabled')
+]);
 
 Route::view('/about', 'about');
 
