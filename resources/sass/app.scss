@@ -1,13 +1,14 @@
+// Variables
+@use '_variables';
+@use '../../node_modules/bootstrap/scss/bootstrap';
+
+
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-// Variables
-@import 'variables';
-
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
 
 // Make it impossible to dismiss both 2FA modal tabs
-.modal-title [aria-expanded=true]{
+.modal-title [aria-expanded=true] {
     pointer-events: none;
 }

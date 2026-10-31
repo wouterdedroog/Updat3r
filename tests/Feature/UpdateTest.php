@@ -13,9 +13,9 @@ it('is possible to create an update', function () {
     $project = $user->projects()->first();
 
     $updateData = [
-        'version' => faker()->semver(false, false),
-        'critical' => faker()->boolean() ? '1' : '0',
-        'public' => faker()->boolean() ? '1' : '0',
+        'version' => fake()->semver(false, false),
+        'critical' => fake()->boolean() ? '1' : '0',
+        'public' => fake()->boolean() ? '1' : '0',
         'updatefile' => UploadedFile::fake()->create('plugin.jar'),
     ];
 
@@ -38,9 +38,9 @@ it('is possible to edit an update', function () {
 
     $project = $user->projects()->first();
     $updateData = [
-        'version' => faker()->semver(false, false),
-        'critical' => faker()->boolean() ? '1' : '0',
-        'public' => faker()->boolean() ? '1' : '0'
+        'version' => fake()->semver(false, false),
+        'critical' => fake()->boolean() ? '1' : '0',
+        'public' => fake()->boolean() ? '1' : '0'
     ];
 
     $this->actingAs($user)->put(route('projects.updates.update', [

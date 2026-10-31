@@ -64,7 +64,7 @@ it('is possible to download an update', function () {
     $update = $project->updates()->first();
 
     // Upload a dummy file to test downloading
-    $fileName = sprintf('%s.%s', $update->version, faker()->fileExtension());
+    $fileName = sprintf('%s.%s', $update->version, fake()->fileExtension());
     UploadedFile::fake()->create($fileName)->storeAs('updates/' . $project->name, $fileName);
     $update->update(['filename' => $fileName]);
 
@@ -95,7 +95,7 @@ it('isn\'t possible to download a version that doesn\'t exist', function () {
         ->create();
     $project = $user->projects()->first();
 
-    $this->get(sprintf('/api/v1/updates/download/?project=%s&key=%s&version=%s', $project->name, $project->legacy_api_key, faker()->semver(false, false)))
+    $this->get(sprintf('/api/v1/updates/download/?project=%s&key=%s&version=%s', $project->name, $project->legacy_api_key, fake()->semver(false, false)))
         ->assertStatus(400)
         ->assertJson([
             'status' => '400',

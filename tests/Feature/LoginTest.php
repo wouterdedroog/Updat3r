@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use function Pest\Faker\faker;
 
 it('is possible to login')
-    ->tap(fn() => User::factory()->create([
+    ->defer(fn() => User::factory()->create([
         'email' => 'wouter@example.com',
         'password' => Hash::make('Welkom01!')
     ]))
@@ -18,8 +18,8 @@ it('is possible to login')
     ->assertRedirect(RouteServiceProvider::HOME);
 
 it('is not possible to login with an incorrect password')
-    ->tap(fn() => User::factory(['email' => 'wouter@example.com'])->create())
+    ->defer(fn() => User::factory(['email' => 'wouter@example.com'])->create())
     ->post('/login', [
         'email' => 'wouter@example.com',
-        'password' => faker()->password(),
+        'password' => fake()->password(),
     ])->assertSessionHasErrors('email');

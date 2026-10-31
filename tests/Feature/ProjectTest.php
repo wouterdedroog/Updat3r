@@ -7,7 +7,7 @@ use function Pest\Faker\faker;
 it('is possible to create a project', function () {
     $user = User::factory()->create();
 
-    $projectName = faker()->regexify('[A-Za-z0-9]{8}');
+    $projectName = fake()->regexify('[A-Za-z0-9]{8}');
     $this->actingAs($user)->post(route('projects.store'), [
         'name' => $projectName,
     ])->assertSessionHasNoErrors();
@@ -19,7 +19,7 @@ it('isn\'t possible to create a project when the name has less than 6 characters
     $user = User::factory()->create();
 
     $this->actingAs($user)->post(route('projects.store'), [
-        'name' => faker()->text(5),
+        'name' => fake()->text(5),
     ])->assertSessionHasErrors(['name' => 'The name must be at least 6 characters.']);
 });
 
@@ -49,7 +49,7 @@ it('is possible to rename a project', function () {
     $project = Project::factory()
         ->for(User::factory())->create();
 
-    $projectName = faker()->regexify('[A-Za-z0-9]{8}');
+    $projectName = fake()->regexify('[A-Za-z0-9]{8}');
     $this->actingAs($project->user)->put(route('projects.update', ['project' => $project]), [
         'name' => $projectName,
     ])->assertSuccessful();

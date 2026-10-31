@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('user_id');
-            $table->uuid('api_key');
+            $table->char('api_key', 36);
             $table->string('legacy_api_key')->nullable();
             $table->timestamps();
         });
